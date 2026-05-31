@@ -28,6 +28,7 @@ function formatDate(value) {
   }
 
   return new Intl.DateTimeFormat("en-PH", {
+    timeZone: "Asia/Manila",
     month: "short",
     day: "numeric",
     hour: "numeric",
@@ -131,6 +132,7 @@ function AdminDashboardBody(props) {
   const [menuForm, setMenuForm] = useState(emptyMenuForm);
   const [savingMenu, setSavingMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [showReportPreview, setShowReportPreview] = useState(false);
   const knownOrderIds = useRef(new Set());
   const loadedOnce = useRef(false);
 
@@ -380,97 +382,11 @@ function AdminDashboardBody(props) {
   const mostOrdered = report?.mostOrdered || [];
 
   function handlePrintReport() {
-    const printWindow = window.open('', '_blank');
-    const today = new Date().toLocaleDateString('en-PH', { dateStyle: 'long' });
+    setShowReportPreview(true);
+  }
 
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>NUEats Sales Report - ${today}</title>
-          <style>
-            body { font-family: sans-serif; padding: 40px; color: #333; }
-            h1 { color: #2C3C94; border-bottom: 2px solid #2C3C94; padding-bottom: 10px; }
-            h2 { margin-top: 30px; color: #666; font-size: 18px; text-transform: uppercase; }
-            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-            th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
-            th { background-color: #f8f9fa; color: #888; font-size: 12px; }
-            .summary-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
-            .summary-item { background: #f0f2ff; padding: 15px; border-radius: 8px; }
-            .summary-item p { margin: 0; font-size: 12px; color: #666; }
-            .summary-item strong { font-size: 20px; color: #2C3C94; }
-            @media print { .no-print { display: none; } }
-          </style>
-        </head>
-        <body>
-          <h1>NUEats Sales & Analytics Report</h1>
-          <p>Generated on: ${today}</p>
-
-          <div class="summary-box">
-            <div class="summary-item">
-              <p>Today's Earnings</p>
-              <strong>${peso(report?.dailyEarnings)}</strong>
-            </div>
-            <div class="summary-item">
-              <p>Monthly Earnings</p>
-              <strong>${peso(report?.monthlyEarnings)}</strong>
-            </div>
-            <div class="summary-item">
-              <p>Yearly Earnings</p>
-              <strong>${peso(report?.yearlyEarnings)}</strong>
-            </div>
-          </div>
-
-          <h2>Most Ordered Food</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>RANK</th>
-                <th>ITEM NAME</th>
-                <th>QUANTITY SOLD</th>
-                <th>TOTAL SALES</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${mostOrdered.map((item, index) => `
-                <tr>
-                  <td>${index + 1}</td>
-                  <td>${item.name}</td>
-                  <td>${item.quantity}</td>
-                  <td>${peso(item.sales)}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-
-          <h2>Daily Breakdown (Last 14 Days)</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>PERIOD</th>
-                <th>TOTAL REVENUE</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${(report?.daily || []).map(row => `
-                <tr>
-                  <td>${row.period}</td>
-                  <td>${peso(row.total)}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-
-          <div style="margin-top: 50px; text-align: center; font-size: 12px; color: #999;">
-            © ${new Date().getFullYear()} NUEats POS System - Private & Confidential
-          </div>
-
-          <script>
-            window.onload = function() { window.print(); window.close(); };
-          </script>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
+  function handleActualPrint() {
+    window.print();
   }
   const menuByCategory = menu.reduce((groups, item) => {
     const category = item.category || "Other";
@@ -931,6 +847,81 @@ function AdminDashboardBody(props) {
           </section>
         </div>
       )}
+
+      <Dialog open={showReportPreview} onClose={() => setShowReportPreview(false)} maxWidth="lg" fullWidth>
+        <DialogTitle className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          Report Preview
+          <div>
+            <Button onClick={handleActualPrint} variant="contained" style={{ backgroundColor: '#2C3C94', marginRight: '10px' }}>Print / PDF</Button>
+            <Button onClick={() => setShowReportPreview(false)}>Close</Button>
+          </div>
+        </DialogTitle>
+        <DialogContent>
+          <div className="PrintableReport" style={{ padding: '20px', color: '#333', backgroundColor: 'white' }}>
+            <h1 style={{ color: '#2C3C94', borderBottom: '2px solid #2C3C94', paddingBottom: '10px', margin: 0 }}>NUEats Sales & Analytics Report</h1>
+            <p>Generated on: {new Date().toLocaleDateString('en-PH', { dateStyle: 'long', timeStyle: 'short' })}</p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginTop: '20px' }}>
+              <div style={{ background: '#f0f2ff', padding: '15px', borderRadius: '8px' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: '#666' }}>Today's Earnings</p>
+                <strong style={{ fontSize: '20px', color: '#2C3C94' }}>{peso(report?.dailyEarnings)}</strong>
+              </div>
+              <div style={{ background: '#f0f2ff', padding: '15px', borderRadius: '8px' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: '#666' }}>Monthly Earnings</p>
+                <strong style={{ fontSize: '20px', color: '#2C3C94' }}>{peso(report?.monthlyEarnings)}</strong>
+              </div>
+              <div style={{ background: '#f0f2ff', padding: '15px', borderRadius: '8px' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: '#666' }}>Yearly Earnings</p>
+                <strong style={{ fontSize: '20px', color: '#2C3C94' }}>{peso(report?.yearlyEarnings)}</strong>
+              </div>
+            </div>
+
+            <h2 style={{ marginTop: '30px', color: '#666', fontSize: '18px', textTransform: 'uppercase' }}>Most Ordered Food</h2>
+            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#f8f9fa' }}>
+                  <th style={{ textAlign: 'left', padding: '12px', borderBottom: '1px solid #eee', color: '#888', fontSize: '12px' }}>RANK</th>
+                  <th style={{ textAlign: 'left', padding: '12px', borderBottom: '1px solid #eee', color: '#888', fontSize: '12px' }}>ITEM NAME</th>
+                  <th style={{ textAlign: 'left', padding: '12px', borderBottom: '1px solid #eee', color: '#888', fontSize: '12px' }}>QUANTITY SOLD</th>
+                  <th style={{ textAlign: 'left', padding: '12px', borderBottom: '1px solid #eee', color: '#888', fontSize: '12px' }}>TOTAL SALES</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mostOrdered.map((item, index) => (
+                  <tr key={item.name}>
+                    <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>{index + 1}</td>
+                    <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>{item.name}</td>
+                    <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>{item.quantity}</td>
+                    <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>{peso(item.sales)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <h2 style={{ marginTop: '30px', color: '#666', fontSize: '18px', textTransform: 'uppercase' }}>Daily Breakdown</h2>
+            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+              <thead>
+                <tr style={{ backgroundColor: '#f8f9fa' }}>
+                  <th style={{ textAlign: 'left', padding: '12px', borderBottom: '1px solid #eee', color: '#888', fontSize: '12px' }}>PERIOD</th>
+                  <th style={{ textAlign: 'left', padding: '12px', borderBottom: '1px solid #eee', color: '#888', fontSize: '12px' }}>TOTAL REVENUE</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(report?.daily || []).map(row => (
+                  <tr key={row.period}>
+                    <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>{row.period}</td>
+                    <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>{peso(row.total)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <div style={{ marginTop: '50px', textAlign: 'center', fontSize: '12px', color: '#999' }}>
+              © {new Date().getFullYear()} NUEats POS System - Private & Confidential
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

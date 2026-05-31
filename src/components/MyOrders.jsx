@@ -16,6 +16,7 @@ function formatDate(value) {
 
   try {
     return new Intl.DateTimeFormat("en-PH", {
+      timeZone: "Asia/Manila",
       month: "short",
       day: "numeric",
       year: "numeric",
