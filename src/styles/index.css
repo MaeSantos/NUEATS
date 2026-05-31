@@ -1,0 +1,16 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #F7F4EB;
+}
+
+button {
+  cursor: pointer;
+}

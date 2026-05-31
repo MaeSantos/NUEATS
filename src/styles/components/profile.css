@@ -1,0 +1,223 @@
+.ProfileContainer {
+    width: min(400px, 100vw);
+    min-height: 100vh;
+    padding: 0 22px;
+    display: flex;
+    flex-direction: column;
+    background: #FBFAFF;
+    color: #1F2433;
+    box-shadow: -10px 0 28px rgba(31, 36, 51, 0.12);
+}
+
+.ProfileHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 0 14px;
+    flex-shrink: 0;
+}
+
+.ProfileCloseButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    background-color: #FFFFFF;
+    border: 1px solid #E4E2EA;
+    border-radius: 50%;
+    color: #2C3C94;
+    font-size: 19px;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(31, 36, 51, 0.08);
+}
+
+.ProfileTitle {
+    display: flex;
+    align-items: center;
+}
+
+#profile-title {
+    font-size: 23px;
+    font-weight: 800;
+    padding: 0;
+    margin: 0;
+    color: #2C3C94;
+}
+
+.ProfileDivider {
+    height: 1px;
+    background: #E4E2EA;
+    flex-shrink: 0;
+}
+
+.ProfileAvatar {
+    width: 78px;
+    height: 78px;
+    margin: 24px auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #FFD41C;
+    color: #2C3C94;
+    font-size: 32px;
+    font-weight: 900;
+    box-shadow: 0 10px 20px rgba(44, 60, 148, 0.16);
+}
+
+.ProfileAvatar--editing {
+    margin-top: 18px;
+}
+
+.NameContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 3px 18px;
+}
+
+#name-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 21px;
+    line-height: 1.25;
+    font-weight: 800;
+    text-align: center;
+    color: #1F2433;
+    margin: 0;
+}
+
+.ProfileSubtitle {
+    margin: 5px 0 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: #667085;
+}
+
+.ProfileDetails {
+    padding: 0 0 10px;
+}
+
+.DetailCard {
+    padding: 14px;
+    background: #FFFFFF;
+    border: 1px solid #E7E4F0;
+    border-radius: 8px;
+    box-shadow: 0 2px 9px rgba(31, 36, 51, 0.05);
+}
+
+.DetailLabel {
+    margin: 0 0 5px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #667085;
+}
+
+.DetailValue {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 800;
+    color: #2C3C94;
+}
+
+.ProfileActions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 12px 0;
+}
+
+.EditButton,
+.SaveButton,
+.CancelButton,
+.LogoutButton {
+    min-height: 42px;
+    padding: 0 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.EditButton,
+.SaveButton {
+    background: #2C3C94;
+    color: #FFFFFF;
+    border: 1px solid #2C3C94;
+    box-shadow: 0 8px 18px rgba(44, 60, 148, 0.22);
+}
+
+.CancelButton {
+    background: #FFFFFF;
+    color: #2C3C94;
+    border: 1px solid #D6D2DF;
+}
+
+.LogoutButton {
+    background: #FFFFFF;
+    color: #A52323;
+    border: 1px solid #F0C8C8;
+}
+
+.ProfileForm {
+    padding: 0 0 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.InputLabel {
+    margin-top: 5px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #344054;
+}
+
+.TextInput {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #D6D2DF;
+    background: #FFFFFF;
+    color: #1F2433;
+    font-size: 14px;
+    outline: none;
+}
+
+.TextInput:focus {
+    border-color: #2C3C94;
+    box-shadow: 0 0 0 3px rgba(44, 60, 148, 0.12);
+}
+
+.TextInput--readonly {
+    background: #F4F2F8;
+    color: #667085;
+    cursor: not-allowed;
+}
+
+.InputHint {
+    margin: -2px 0 4px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #667085;
+}
+
+.FormError {
+    color: #B42318;
+    background: #FFF1F0;
+    border: 1px solid #FFD2CC;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.4;
+    margin: 8px 0 0;
+    padding: 9px 10px;
+}
+
+@media (max-width: 480px) {
+    .ProfileContainer {
+        width: 100vw;
+        padding: 0 16px;
+    }
+}

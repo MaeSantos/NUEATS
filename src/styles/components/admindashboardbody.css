@@ -1,0 +1,752 @@
+#AdminDashboardBody {
+    width: 100%;
+    max-width: 1220px;
+    padding: 20px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.AdminStats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.DashboardCharts {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.StatCard,
+.AdminContent,
+.AdminNotice,
+.AdminError {
+    background-color: #FFFFFF;
+    border: 1px solid #E7E4F0;
+    border-radius: 8px;
+    box-shadow: 0 2px 9px rgba(31, 36, 51, 0.06);
+}
+
+.StatCard {
+    padding: 16px;
+}
+
+.StatCard p {
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #667085;
+}
+
+.StatCard strong {
+    font-size: 24px;
+    color: #2C3C94;
+}
+
+.AdminGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 16px;
+}
+
+.AdminContent {
+    padding: 20px;
+    min-height: 220px;
+    font-family: 'Inter', sans-serif;
+    color: #1F2433;
+}
+
+.AdminContent h1 {
+    font-size: 22px;
+    font-weight: 850;
+    margin: 0 0 6px;
+    color: #2C3C94;
+}
+
+.AdminContent h2 {
+    font-size: 15px;
+    margin: 0 0 10px;
+    color: #1F2433;
+}
+
+.AdminContent p {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.45;
+    color: #667085;
+}
+
+.SectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.RefreshButton,
+.AdminNotice button {
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 1px solid #2C3C94;
+    background: #2C3C94;
+    color: #FFFFFF;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.AdminNotice {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    color: #2C3C94;
+    font-weight: 800;
+    background: #FFF8D6;
+    border-color: #F4D65C;
+}
+
+.AdminError {
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    color: #B42318;
+    background: #FFF1F0;
+    border-color: #FFD2CC;
+}
+
+.OrderList,
+.RankingList,
+.MenuTable {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.OrderCard {
+    border: 1px solid #E7E4F0;
+    border-radius: 8px;
+    padding: 14px;
+    background: #FBFAFF;
+}
+
+.OrderTopline,
+.OrderItems p,
+.MenuRow,
+.CompactOrder,
+.ReportRow {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.OrderTopline {
+    align-items: flex-start;
+}
+
+.OrderTopline h2 {
+    margin: 2px 0;
+    font-size: 17px;
+}
+
+.OrderTopline strong,
+.MenuRow strong,
+.CompactOrder strong,
+.ReportRow strong {
+    color: #2C3C94;
+}
+
+.QueueNumber {
+    color: #A07900 !important;
+    font-weight: 900;
+}
+
+.MutedText {
+    color: #667085 !important;
+}
+
+.OrderItems {
+    margin: 12px 0;
+    padding: 10px 0;
+    border-top: 1px solid #E7E4F0;
+    border-bottom: 1px solid #E7E4F0;
+}
+
+.OrderItems p + p {
+    margin-top: 6px;
+}
+
+.PaymentReference {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    background: #FFFFFF;
+    border: 1px solid #E7E4F0;
+    color: #344054 !important;
+}
+
+.PaymentReference span {
+    color: #667085;
+    font-size: 12px;
+    font-weight: 900;
+}
+
+.PaymentReference strong {
+    color: #2C3C94;
+    font-size: 13px;
+}
+
+.OrderControls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.OrderControls label {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #344054;
+}
+
+.OrderControls select {
+    min-height: 38px;
+    border-radius: 8px;
+    border: 1px solid #D6D2DF;
+    padding: 0 10px;
+    background: #FFFFFF;
+    color: #1F2433;
+    font-weight: 700;
+}
+
+.SidePanel {
+    align-self: start;
+}
+
+.CompactOrder,
+.MenuRow,
+.RankingRow,
+.ReportRow {
+    padding: 11px 12px;
+    border: 1px solid #E7E4F0;
+    border-radius: 8px;
+    background: #FBFAFF;
+    align-items: center;
+}
+
+.CompactOrder {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.CompactOrder p {
+    margin-top: 3px;
+    font-size: 11px;
+}
+
+.CompactActionButton {
+    grid-column: 1 / -1;
+    min-height: 30px;
+    border: 1px solid #2C3C94;
+    border-radius: 8px;
+    background: #FFFFFF;
+    color: #2C3C94;
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.MenuRow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 110px 80px;
+}
+
+.MenuWindow {
+    border-top: 5px solid #FFD41C;
+}
+
+.WindowEyebrow {
+    margin: 0 0 5px !important;
+    font-size: 12px !important;
+    font-weight: 900;
+    color: #A07900 !important;
+    text-transform: uppercase;
+}
+
+.MenuCountBadge {
+    min-width: 60px;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    border-radius: 6px;
+    background: #2C3C94;
+    color: #FFFFFF;
+    font-weight: 900;
+    font-size: 13px;
+}
+
+.MenuEditor {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding: 14px;
+    border: 1px solid #E7E4F0;
+    border-radius: 8px;
+    background: #FBFAFF;
+}
+
+.MenuEditorHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.MenuEditorHeader h2 {
+    margin: 0;
+    color: #2C3C94;
+}
+
+.TextActionButton {
+    border: none;
+    background: transparent;
+    color: #2C3C94;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.MenuEditorGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) 100px 90px 120px minmax(150px, 0.9fr) 160px;
+    gap: 10px;
+    align-items: end;
+}
+
+.MenuEditor label,
+.MenuDescriptionField {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    color: #344054;
+    font-size: 12px;
+    font-weight: 850;
+}
+
+.MenuEditor input,
+.MenuEditor select,
+.MenuEditor textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #D6D2DF;
+    border-radius: 8px;
+    background: #FFFFFF;
+    color: #1F2433;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    outline: none;
+}
+
+.MenuEditor input,
+.MenuEditor select {
+    min-height: 38px;
+    padding: 0 10px;
+}
+
+.MenuEditor input[type="file"] {
+    padding: 8px;
+    font-size: 12px;
+}
+
+.MenuEditor textarea {
+    padding: 10px;
+    resize: vertical;
+}
+
+.MenuImagePreview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border: 1px solid #E7E4F0;
+    border-radius: 8px;
+    background: #FFFFFF;
+}
+
+.MenuImagePreview img {
+    width: 78px;
+    height: 58px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #D6D2DF;
+}
+
+.MenuAvailability {
+    min-height: 38px;
+    flex-direction: row !important;
+    align-items: center;
+    padding: 0 10px;
+    border: 1px solid #D6D2DF;
+    border-radius: 8px;
+    background: #FFFFFF;
+}
+
+.MenuAvailability input {
+    width: 16px;
+    min-height: auto;
+}
+
+.MenuCategoryGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.MenuCategoryPanel {
+    border: 1px solid #E7E4F0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #FBFAFF;
+}
+
+.MenuCategoryHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 14px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E7E4F0;
+}
+
+.MenuCategoryHeader h2 {
+    margin: 0;
+    color: #2C3C94;
+}
+
+.MenuCategoryHeader span {
+    min-width: 28px;
+    height: 28px;
+    padding: 0 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: #FFD41C;
+    color: #2C3C94;
+    font-weight: 900;
+}
+
+.MenuCardList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px;
+}
+
+.MenuItemCard {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #E7E4F0;
+    border-radius: 8px;
+    background: #FFFFFF;
+}
+
+.MenuItemImage {
+    width: 58px;
+    height: 58px;
+    flex: 0 0 58px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #E7E4F0;
+    background: #FBFAFF;
+}
+
+.MenuItemCard h3 {
+    margin: 0 0 5px;
+    font-size: 14px;
+    color: #1F2433;
+}
+
+.MenuItemCard p {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.MenuItemCard strong {
+    color: #2C3C94;
+    white-space: nowrap;
+}
+
+.MenuStatusBadge {
+    display: inline-flex;
+    width: fit-content;
+    margin-top: 8px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #E9F8EF;
+    color: #067647;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.MenuStatusBadge.Hidden {
+    background: #FFF1F0;
+    color: #B42318;
+}
+
+.StockBadge {
+    display: inline-flex;
+    width: fit-content;
+    margin-top: 8px;
+    margin-left: 6px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #EFF4FF;
+    color: #2C3C94;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.StockBadge.Empty {
+    background: #FFF1F0;
+    color: #B42318;
+}
+
+.MenuItemActions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.MenuItemActions button {
+    min-height: 30px;
+    min-width: 72px;
+    padding: 0 10px;
+    border: 1px solid #2C3C94;
+    border-radius: 8px;
+    background: #FFFFFF;
+    color: #2C3C94;
+    font-size: 12px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.MenuItemActions .DangerButton {
+    border-color: #B42318;
+    color: #B42318;
+}
+
+.RankingRow {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    gap: 10px;
+}
+
+.RankingRow > span {
+    min-width: 30px;
+    height: 30px;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: #FFD41C;
+    color: #2C3C94;
+    font-weight: 900;
+}
+
+.RankingRow strong {
+    color: #1F2433;
+}
+
+.ReportColumns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.ChartStack {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin: 14px 0;
+}
+
+.ChartPanel {
+    padding: 14px;
+    border: 1px solid #E7E4F0;
+    border-radius: 8px;
+    background: #FBFAFF;
+}
+
+.AreaChart {
+    margin-top: 12px;
+    overflow-x: auto;
+}
+
+.AreaChartSvg {
+    width: 100%;
+    min-width: 320px;
+    height: 190px;
+    display: block;
+    border: 1px solid #E7E4F0;
+    border-radius: 8px;
+    background: #FFFFFF;
+}
+
+.AreaGridLine {
+    stroke: rgba(44, 60, 148, 0.12);
+    stroke-width: 1;
+}
+
+.AreaFill {
+    stroke: none;
+}
+
+.AreaLine {
+    fill: none;
+    stroke: #2C3C94;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.AreaPoint {
+    fill: #FFD41C;
+    stroke: #2C3C94;
+    stroke-width: 2;
+}
+
+.AreaValue {
+    fill: #2C3C94;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.AreaChartLabels {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    min-width: 320px;
+    padding: 8px 10px 0;
+    box-sizing: border-box;
+}
+
+.AreaChartLabels span {
+    color: #667085;
+    font-size: 10px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.HorizontalChart {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.HorizontalBarRow {
+    display: grid;
+    grid-template-columns: 115px minmax(0, 1fr) 34px;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #344054;
+}
+
+.HorizontalTrack {
+    height: 14px;
+    background: #FFFFFF;
+    border: 1px solid #E7E4F0;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.HorizontalFill {
+    height: 100%;
+    background: #FFD41C;
+    border-radius: 999px;
+}
+
+.HorizontalBarRow strong {
+    color: #2C3C94;
+    text-align: right;
+}
+
+.EmptyAdminState {
+    padding: 26px;
+    text-align: center;
+    border: 1px dashed #CDC8D8;
+    border-radius: 8px;
+}
+
+@media (max-width: 900px) {
+    #AdminDashboardBody {
+        padding: 10px;
+    }
+
+    .AdminStats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .DashboardCharts,
+    .AdminGrid,
+    .ReportColumns {
+        grid-template-columns: 1fr;
+    }
+
+    .StatCard strong {
+        font-size: 18px;
+    }
+
+    .MenuRow {
+        grid-template-columns: 1fr;
+    }
+
+    .MenuCategoryGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .MenuEditorGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .MenuItemCard {
+        flex-direction: column;
+    }
+
+    .MenuItemActions {
+        align-items: flex-start;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+@media (max-width: 480px) {
+    .AdminStats {
+        grid-template-columns: 1fr;
+    }
+}

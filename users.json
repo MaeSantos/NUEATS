@@ -1,0 +1,62 @@
+{
+  "202600001": {
+    "name": "Maria Santos",
+    "phone": "09170000001",
+    "studentId": "202600001",
+    "password": "202600001"
+  },
+  "202600002": {
+    "name": "Juan Dela Cruz",
+    "phone": "09170000002",
+    "studentId": "202600002",
+    "password": "202600002"
+  },
+  "202600003": {
+    "name": "Angela Reyes",
+    "phone": "09170000003",
+    "studentId": "202600003",
+    "password": "202600003"
+  },
+  "202600004": {
+    "name": "Miguel Garcia",
+    "phone": "09170000004",
+    "studentId": "202600004",
+    "password": "202600004"
+  },
+  "202600005": {
+    "name": "Sofia Mendoza",
+    "phone": "09170000005",
+    "studentId": "202600005",
+    "password": "202600005"
+  },
+  "202600006": {
+    "name": "Carlo Ramos",
+    "phone": "09170000006",
+    "studentId": "202600006",
+    "password": "202600006"
+  },
+  "202600007": {
+    "name": "Nicole Flores",
+    "phone": "09170000007",
+    "studentId": "202600007",
+    "password": "202600007"
+  },
+  "202600008": {
+    "name": "Mark Villanueva",
+    "phone": "09170000008",
+    "studentId": "202600008",
+    "password": "202600008"
+  },
+  "202600009": {
+    "name": "Ella Aquino",
+    "phone": "09170000009",
+    "studentId": "202600009",
+    "password": "202600009"
+  },
+  "732382772": {
+    "name": "John Doe",
+    "phone": "09612453929",
+    "studentId": "732382772",
+    "password": "732382772"
+  }
+}

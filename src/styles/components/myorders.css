@@ -1,0 +1,163 @@
+.MyOrdersContainer {
+    width: min(420px, 100vw);
+    min-height: 100vh;
+    background: #ffffff;
+    padding: 22px;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.MyOrdersHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.MyOrdersHeader h1 {
+    margin: 0;
+    color: #2C3C94;
+    font-size: 26px;
+}
+
+.MyOrdersHeader p {
+    margin: 4px 0 0;
+    color: #666;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.MyOrdersCloseButton {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid #d9d9d9;
+    background: #ffffff;
+    color: #2C3C94;
+    font-weight: 700;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.14);
+}
+
+.MyOrdersState,
+.MyOrdersError {
+    margin: 20px 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.MyOrdersError {
+    color: #b00020;
+}
+
+.MyOrdersEmpty {
+    border: 1px solid #e2e2e2;
+    border-radius: 8px;
+    padding: 18px;
+    background: #fafafa;
+}
+
+.MyOrdersEmpty h2 {
+    margin: 0 0 6px;
+    color: #2C3C94;
+    font-size: 18px;
+}
+
+.MyOrdersEmpty p {
+    margin: 0;
+    color: #666;
+    font-size: 13px;
+}
+
+.MyOrdersList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.MyOrderCard {
+    border: 1px solid #e3e3e3;
+    border-radius: 8px;
+    padding: 14px;
+    background: #ffffff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.MyOrderTopline {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.MyOrderTopline h2 {
+    margin: 0;
+    color: #2C3C94;
+    font-size: 17px;
+}
+
+.MyOrderTopline p {
+    margin: 4px 0 0;
+    color: #777;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.MyOrderTopline strong {
+    color: #111;
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+.MyOrderMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 12px 0;
+}
+
+.MyOrderMeta span {
+    border-radius: 999px;
+    padding: 5px 8px;
+    background: #f3f5ff;
+    color: #2C3C94;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.MyOrderItems {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.MyOrdersContainer--nested {
+    min-height: auto;
+    width: 100%;
+    padding: 0;
+}
+
+.MyOrdersHeader--nested {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.StatusBadge {
+    border-radius: 999px;
+    padding: 5px 10px !important;
+    font-size: 10px !important;
+    text-transform: uppercase;
+}
+
+.status-preparing { background: #FFF8E1 !important; color: #F57F17 !important; }
+.status-ready-for-pickup { background: #E8F5E9 !important; color: #2E7D32 !important; }
+.status-picked-up { background: #E3F2FD !important; color: #1565C0 !important; }
+.status-cancelled { background: #FFEBEE !important; color: #C62828 !important; }
+
+.MyOrderItems li {
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+}
+

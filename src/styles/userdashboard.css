@@ -1,0 +1,22 @@
+#DashboardBody {
+    display: flex;
+    flex-wrap: wrap;
+    width: 990px;
+    max-width: 1500px;
+    padding: 0;
+    margin: 0 auto;
+}
+
+/* For the Android app, use the full responsive width */
+.is-native #DashboardBody {
+    width: 100%;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    #DashboardBody {
+        width: 100%;
+        padding: 10px;
+        justify-content: center;
+    }
+}

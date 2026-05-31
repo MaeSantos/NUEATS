@@ -1,0 +1,433 @@
+#LoginGrid {
+    display: flex;
+    height: 100vh;
+}
+
+@media (max-width: 768px) {
+    #LoginGrid {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+        background-color: #ffffff;
+    }
+
+    #ImageSection {
+        display: none !important;
+    }
+
+    #LoginSection {
+        width: 100% !important;
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 0;
+    }
+
+    #InnerBox {
+        width: 85% !important;
+        height: auto !important;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    #LogoDiv {
+        height: auto !important;
+        margin-bottom: 10px;
+    }
+
+    #Logo {
+        height: 60px !important;
+    }
+
+    #TextDiv {
+        height: auto !important;
+        text-align: center;
+    }
+
+    h1 {
+        font-size: 24px !important;
+    }
+
+    h3 {
+        font-size: 14px !important;
+    }
+
+    #FormDiv {
+        height: auto !important;
+    }
+
+    .PasswordField {
+        height: 45px !important;
+        margin-bottom: 7.5px;
+    }
+
+    .PasswordField input {
+        height: 100% !important;
+        font-size: 14px !important;
+    }
+
+    .PasswordToggle {
+        height: 30px !important;
+        line-height: 1 !important;
+        padding: 0 8px !important;
+        font-size: 11px !important;
+    }
+
+    input {
+        height: 45px !important;
+        font-size: 14px !important;
+    }
+
+    #ButtonDiv {
+        height: auto !important;
+        margin-top: 10px;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #LoginButton {
+        height: 50px !important;
+        font-size: 16px !important;
+        width: 100% !important;
+    }
+}
+
+#ImageSection {
+    width: 52%;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+#BackgroundImage {
+    height: 80%;
+}
+
+#LoginSection {
+    width: 48%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#InnerBox {
+    width: 60%;
+    height: 77%;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#LogoDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 14%;
+}
+
+#TextDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 29%;
+}
+
+#TextWrapper {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    width: 100%;
+}
+
+#FormDiv {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 37%;
+}
+
+#FormWrapper {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    width: 100%; 
+}
+
+#ButtonDiv {
+    display: flex;
+    justify-content: center;
+    align-items: end;
+    height: 20%;
+}
+
+#Logo {
+    height: 60%;
+}
+
+h1 {
+    font-weight: 750;
+    padding: 0;
+    margin: 0;
+}
+
+h3 {
+    font-weight: 250;
+    font-size: 15px;
+    padding: 0;
+    margin: 0;
+}
+
+.FormLabel {
+    font-weight: 450;
+    padding: 0;
+    margin: 0 0 5px 0;
+}
+
+input {
+    border-radius: 5px;
+    height: 50px;
+    margin-bottom: 7.5px;
+    background-color: #C1CAFD;
+    border: 0.5px solid #000;
+    padding: 0 15px;
+    font-weight: 350;
+    color: #000;
+    letter-spacing: 0.3px;
+}
+
+.PasswordField {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 7.5px;
+}
+
+.PasswordField input {
+    width: 100%;
+    margin-bottom: 0;
+    padding-right: 75px;
+    box-sizing: border-box;
+}
+
+.PasswordToggle {
+    position: absolute;
+    right: 8px;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid #2C3C94;
+    border-radius: 6px;
+    background: #FFFFFF;
+    color: #2C3C94;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.PasswordToggle:hover {
+    background: #F1F3FF;
+}
+
+input::placeholder {
+    font-weight: 200;
+    color: #1E1E1E;
+}
+
+#LoginButton {
+    width: 100%;
+    height: 60px;
+    border-radius: 8px;
+    border: 2px solid #000;
+    font-weight: 750;
+    font-size: 18px;
+    background-color: #E1C23C;
+    color: #000;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 6px 0 #000;
+    transform: translateY(0);
+    transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        background-color 180ms ease,
+        filter 180ms ease;
+}
+
+#LoginButton:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 9px 0 #000;
+    filter: brightness(1.04);
+}
+
+#LoginButton:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #000;
+    filter: brightness(0.98);
+}
+
+#LoginButton:focus-visible {
+    outline: 3px solid #000;
+    outline-offset: 3px;
+}
+
+#LoginButton:disabled {
+    cursor: not-allowed;
+    opacity: 0.75;
+    transform: none;
+    box-shadow: 0 4px 0 #000;
+}
+
+#LoginButton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.35) 45%,
+        transparent 60%
+    );
+    transform: translateX(-120%);
+    transition: transform 450ms ease;
+}
+
+#LoginButton:hover:not(:disabled)::after {
+    transform: translateX(120%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #LoginButton,
+    #LoginButton::after {
+        transition: none;
+    }
+}
+
+.LoginError {
+    color: #b00020;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.PortalEyebrow {
+    margin: 0 0 8px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #2C3C94;
+    text-transform: uppercase;
+}
+
+.AdminLoginGrid #LoginButton {
+    background-color: #2C3C94;
+    color: #FFFFFF;
+}
+
+.PortalSwitch {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.PortalSwitchButton {
+    background: none;
+    border: none;
+    color: #2C3C94;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.PortalSwitchButton:hover {
+    color: #1f2e78;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.VerifyingContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 20px;
+}
+
+.VerifyingLogo {
+    height: 80px;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+.VerifyingText {
+    font-weight: 600;
+    color: #2C3C94;
+    font-size: 16px;
+}
+
+/* Test Credentials Styles */
+.TestCredentialsBox {
+    margin-top: 25px;
+    padding: 12px;
+    background: #f8f9ff;
+    border: 1px dashed #2C3C94;
+    border-radius: 8px;
+}
+
+.TestCredentialsTitle {
+    margin: 0 0 8px 0;
+    font-size: 12px;
+    font-weight: 800;
+    color: #2C3C94;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.TestCredentialsScroll {
+    max-height: 120px;
+    overflow-y: auto;
+    font-size: 11px;
+}
+
+.TestCredentialsScroll table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.TestCredentialsScroll th {
+    text-align: left;
+    color: #666;
+    padding-bottom: 4px;
+}
+
+.TestCredentialsScroll td {
+    padding: 2px 0;
+    color: #333;
+}
+
+.TestCredentialsText {
+    font-size: 13px;
+    margin: 4px 0;
+    color: #333;
+}
+
+.TestCredentialsText code {
+    background: #eef1ff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    color: #2C3C94;
+}
+
+.AdminTestBox {
+    background: #fffdf5;
+    border-color: #E1C23C;
+}
+
+.AdminTestBox .TestCredentialsTitle {
+    color: #8a7300;
+}

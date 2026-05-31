@@ -1,0 +1,18 @@
+{
+  "appId": "com.example.nueats",
+  "appName": "NUEats",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "presentationOptions": {
+        "badge": true,
+        "sound": true,
+        "alert": true
+      }
+    }
+  }
+}

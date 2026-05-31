@@ -1,0 +1,246 @@
+header {
+    height: auto;
+    width: 100%;
+    background-color: #FFFFFF;
+    margin: 0;
+    box-shadow: 0 0 9.5px 0 rgba(0, 0, 0, 0.3);
+}
+
+#CenterDiv {
+    width: 940px;
+    padding: 28px 0 0 0;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+/* For the Android app, use the flexible percentage width */
+.is-native #CenterDiv {
+    width: 95%;
+    padding: 20px 0 0 0;
+}
+
+@media (max-width: 768px) {
+    #CenterDiv {
+        width: 95%;
+        padding: 20px 0 0 0;
+    }
+
+    #SearchDiv {
+        flex-wrap: wrap;
+        height: auto !important;
+        gap: 10px !important;
+        padding-bottom: 10px;
+    }
+
+    #LogoText {
+        order: 1;
+    }
+
+    .UserInfo {
+        order: 2;
+        margin-left: auto;
+    }
+
+    .NavButton {
+        order: 3;
+    }
+
+    .OrdersButton {
+        order: 3;
+    }
+
+    .SearchWrapper {
+        order: 4;
+        width: 100% !important;
+    }
+
+    #FilterDiv {
+        overflow-x: auto;
+        justify-content: space-between !important;
+        gap: 5px;
+        padding-bottom: 5px;
+    }
+
+    .FilterButton {
+        width: auto !important;
+        padding: 0 10px !important;
+        flex-shrink: 0;
+    }
+}
+
+#SearchDiv {
+    height: 35px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0;
+}
+
+#SearchInput {
+    height: 28.5px;
+    width: 100%;
+    background-color: #F9F8F8;
+    border-radius: 6.5px;
+    font-family: 'Montserrat', sans-serif;
+    outline: none;
+    border: 0.5px solid #D9D9D9;
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.18);
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 10px 15px;
+    margin: 0;
+}
+
+#SearchInput::placeholder {
+    color: #8F8E8E;
+    opacity: 1;
+}
+
+.SearchWrapper {
+    position: relative;
+    width: 100%;
+}
+
+.SearchIcon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 12.5px;
+    width: 12.5px;
+}
+
+.SearchIconButton {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+#LogoText {
+    height: 27.5px;
+    padding: 3px 0;
+    filter: drop-shadow(-1px 0px 2px rgba(0, 0, 0, 0.3));
+}
+
+.NavButton {
+    position: relative;
+    height: 29px;
+    width: 29px;
+    padding: 0;
+    border-radius: 50%;
+
+    background-color: #FFFFFF;
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.18);
+    border: 0.5px solid #D9D9D9;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+.CartNavButton {
+    overflow: visible;
+}
+
+.CartCountBadge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #FFD41C;
+    border: 2px solid #FFFFFF;
+    color: #2C3C94;
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 1;
+    box-shadow: 0 3px 8px rgba(31, 36, 51, 0.22);
+    animation: cartBadgePop 260ms ease-out;
+}
+
+@keyframes cartBadgePop {
+    0% {
+        transform: scale(0.35);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.18);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.NavIcon {
+    height: 17px;
+}
+
+.OrdersButton {
+    height: 29px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1.5px solid #2C3C94; /* Use the brand color */
+    background: #FFFFFF;
+    box-shadow: 0 4px 5px rgba(0, 0, 0, 0.18);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #2C3C94;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    font-weight: 800; /* Bolder */
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.OrdersButton:active {
+    background-color: #2C3C94;
+    color: #FFFFFF;
+    transform: scale(0.95);
+}
+
+#FilterDiv {
+    height: 35px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+}
+
+.FilterButton {
+    height: 24px;
+    width: 90px;
+    background-color: transparent;
+    border: none;
+    font-size: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    color: #2C3C94;
+}
+
+.ActiveFilter {
+    border-bottom: 2px solid #FFD41C;
+}
+
+.UserInfo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.UserName {
+    font-size: 14px;
+    color: #333;
+}
