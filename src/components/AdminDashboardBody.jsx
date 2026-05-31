@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import '../styles/components/admindashboardbody.css';
 import { apiFetch, apiUrl } from '../api';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import { Capacitor } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
 
 const orderStatuses = ["Queued", "Preparing", "Ready for pickup", "Picked up", "Cancelled"];
 const paymentStatuses = ["Pending payment", "Payment received", "Refunded"];
@@ -200,12 +202,29 @@ function AdminDashboardBody(props) {
 
     const stream = new EventSource(`${apiUrl("/api/admin/orders/stream")}?token=${encodeURIComponent(props.adminToken)}`);
 
-    stream.addEventListener("order-created", () => {
+    stream.addEventListener("order-created", async () => {
       loadAdminData({ quiet: true });
       setNewOrderNotice("New order received.");
-      // Popup notification for admin
-      if (Notification.permission === "granted") {
-        new Notification("New Order Received!", {
+
+      // Proper native/vibrating notification for admin
+      if (Capacitor.isNativePlatform()) {
+        try {
+          await LocalNotifications.schedule({
+            notifications: [
+              {
+                title: "New Order Received! 🛒",
+                body: "A student just placed a new order. Check the queue!",
+                id: Math.floor(Math.random() * 1000000),
+                sound: 'order_received.wav', // optional
+                schedule: { at: new Date(Date.now() + 100) },
+              }
+            ]
+          });
+        } catch (err) {
+          console.error("Local notification error", err);
+        }
+      } else if (Notification.permission === "granted") {
+        new Notification("New Order Received! 🛒", {
           body: "A student just placed a new order. Check the queue!",
           icon: "/favicon.svg"
         });

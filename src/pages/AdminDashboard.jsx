@@ -71,7 +71,7 @@ function AdminDashboard() {
   };
 
   async function handleSaveAdminProfile(profile) {
-    const nextProfile = { ...adminProfile, name: profile.name };
+    const nextProfile = { ...adminProfile, name: profile.name, imageUrl: profile.imageUrl };
     setAdminProfile(nextProfile);
     localStorage.setItem("nu_admin_user", JSON.stringify(nextProfile));
 
@@ -82,7 +82,7 @@ function AdminDashboard() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${adminToken}`,
         },
-        body: JSON.stringify({ name: profile.name }),
+        body: JSON.stringify({ name: profile.name, imageUrl: profile.imageUrl }),
       });
       const data = await response.json().catch(() => null);
       if (!response.ok || data?.success === false) {

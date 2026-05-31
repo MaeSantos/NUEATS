@@ -583,6 +583,7 @@ app.post("/api/admin/me", async (req, res) => {
       ...existingProfile,
       studentId,
       name: nextName,
+      imageUrl: req.body?.imageUrl || existingProfile.imageUrl || "",
       phone: existingProfile.phone || "",
       password: existingProfile.password || "",
     });
@@ -592,11 +593,13 @@ app.post("/api/admin/me", async (req, res) => {
     }
 
     admin.name = nextName;
+    admin.imageUrl = result.profile.imageUrl;
     res.json({
       success: true,
       profile: {
         username: admin.username,
         name: nextName,
+        imageUrl: admin.imageUrl,
       },
     });
   } catch (error) {
@@ -645,6 +648,7 @@ app.post("/api/user", async (req, res) => {
   const nextProfile = {
     ...existingProfile,
     name: nextName,
+    imageUrl: profile.imageUrl || existingProfile.imageUrl || "",
     phone: existingProfile.phone || "",
     studentId,
     password: existingProfile.password || "",

@@ -67,7 +67,7 @@ function UserDashboard() {
   }, [token, navigate]);
 
   async function handleSaveProfile(p) {
-    const nextProfile = { ...userProfile, name: p.name };
+    const nextProfile = { ...userProfile, name: p.name, imageUrl: p.imageUrl };
     setUserProfile(nextProfile);
     try {
       const response = await apiFetch('/api/user', {
@@ -76,7 +76,7 @@ function UserDashboard() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ name: p.name }),
+        body: JSON.stringify({ name: p.name, imageUrl: p.imageUrl }),
       });
       const data = await response.json().catch(() => null);
       if (!response.ok || data?.success === false) {
@@ -311,7 +311,7 @@ function UserDashboard() {
                 notifications: [
                   {
                     title: "Order Cancelled",
-                    body: `Your Order #${orderId} was cancelled. Please visit the cashier for a refund or explanation.`,
+                    body: `Your Order #${orderId} was cancelled. Please visit the cashier for a refund.`,
                     id: Number(orderId) + 2000,
                     schedule: { at: new Date(Date.now() + 100) },
                   }
