@@ -18,7 +18,7 @@ from django.contrib.auth.hashers import check_password, identify_hasher, make_pa
 from django.core.management import call_command  # noqa: E402
 from django.db import transaction  # noqa: E402
 from django.db.models import F, Max, Sum  # noqa: E402
-from django.db.models.functions import TruncDate, TruncMonth  # noqa: E402
+from django.db.models.functions import TruncDate, TruncMonth, TruncYear  # noqa: E402
 from django.utils import timezone  # noqa: E402
 
 django.setup()
@@ -239,6 +239,7 @@ def serialize_order(order):
     return {
         "orderId": order.id,
         "studentId": order.student_id,
+        "studentName": order.student.name if order.student else "Guest",
         "items": items,
         "total": float(order.total),
         "paymentMethod": order.payment_method,
@@ -307,6 +308,7 @@ def cmd_user_upsert(_args):
         defaults={
             "name": payload.get("name", ""),
             "phone": payload.get("phone", ""),
+            "image_url": payload.get("imageUrl", ""),
             "password": normalize_password(payload.get("password", "")),
         },
     )
@@ -575,10 +577,12 @@ def cmd_order_update(args):
 def cmd_report_summary(_args):
     today = timezone.localdate()
     month_start = today.replace(day=1)
+    year_start = today.replace(month=1, day=1)
 
     paid_orders = OrderRecord.objects.filter(payment_status="Payment received")
     today_orders = paid_orders.filter(created_at__date=today)
     month_orders = paid_orders.filter(created_at__date__gte=month_start)
+    year_orders = paid_orders.filter(created_at__date__gte=year_start)
 
     # Use the new OrderItem table for accurate reporting, filtered by paid orders
     item_counts = {}
@@ -607,6 +611,12 @@ def cmd_report_summary(_args):
         .annotate(total=Sum("total"))
         .order_by("-period")[:12]
     )
+    yearly_rows = (
+        paid_orders.annotate(period=TruncYear("created_at"))
+        .values("period")
+        .annotate(total=Sum("total"))
+        .order_by("-period")[:5]
+    )
 
     if not daily_rows.exists():
         all_orders = OrderRecord.objects.all()
@@ -626,6 +636,15 @@ def cmd_report_summary(_args):
             .order_by("-period")[:12]
         )
 
+    if not yearly_rows.exists():
+        all_orders = OrderRecord.objects.all()
+        yearly_rows = (
+            all_orders.annotate(period=TruncYear("created_at"))
+            .values("period")
+            .annotate(total=Sum("total"))
+            .order_by("-period")[:5]
+        )
+
     print(
         json.dumps(
             {
@@ -633,6 +652,7 @@ def cmd_report_summary(_args):
                 "summary": {
                     "dailyEarnings": float(today_orders.aggregate(total=Sum("total"))["total"] or 0),
                     "monthlyEarnings": float(month_orders.aggregate(total=Sum("total"))["total"] or 0),
+                    "yearlyEarnings": float(year_orders.aggregate(total=Sum("total"))["total"] or 0),
                     "pendingPayments": OrderRecord.objects.filter(payment_status="Pending payment").count(),
                     "activeQueue": OrderRecord.objects.exclude(order_status__in=["Picked up", "Cancelled"]).count(),
                     "mostOrdered": most_ordered[:8],
@@ -643,6 +663,10 @@ def cmd_report_summary(_args):
                     "monthly": [
                         {"period": row["period"].isoformat() if hasattr(row["period"], "isoformat") else str(row["period"] or ""), "total": float(row["total"] or 0)}
                         for row in monthly_rows
+                    ],
+                    "yearly": [
+                        {"period": row["period"].isoformat() if hasattr(row["period"], "isoformat") else str(row["period"] or ""), "total": float(row["total"] or 0)}
+                        for row in yearly_rows
                     ],
                 },
             }

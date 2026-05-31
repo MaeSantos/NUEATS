@@ -305,10 +305,28 @@ function UserDashboard() {
         }
 
         if (data.status === "Cancelled" && prevStatusRef.current !== "Cancelled") {
-           setTimeout(() => {
+          if (Capacitor.isNativePlatform()) {
+            try {
+              await LocalNotifications.schedule({
+                notifications: [
+                  {
+                    title: "Order Cancelled",
+                    body: `Your Order #${orderId} was cancelled. Please visit the cashier for a refund or explanation.`,
+                    id: Number(orderId) + 2000,
+                    schedule: { at: new Date(Date.now() + 100) },
+                  }
+                ]
+              });
+            } catch (err) {
+              console.error("Local notification error", err);
+            }
+          } else {
+            alert(`Order #${orderId} has been cancelled. Please go to the cashier for a refund or explanation.`);
+          }
+          setTimeout(() => {
             setOrderId(null);
             setOrderStatus("");
-          }, 2000);
+          }, 5000);
         }
 
         setOrderStatus(data.status);

@@ -7,6 +7,7 @@ class UserProfile(models.Model):
     name = models.CharField(max_length=255, blank=True, default="")
     phone = models.CharField(max_length=50, blank=True, default="")
     password = models.CharField(max_length=255, blank=True, default="")
+    image_url = models.TextField(blank=True, default="")
     is_admin = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -16,6 +17,7 @@ class UserProfile(models.Model):
             "studentId": self.student_id,
             "name": self.name,
             "phone": self.phone,
+            "imageUrl": self.image_url,
             "password": self.password,
             "isAdmin": self.is_admin,
             "createdAt": self.created_at.isoformat() if self.created_at else None,

@@ -38,9 +38,7 @@ function FoodItem(props) {
                 <div className="PriceDiv">
                     <div>
                         <p className="FoodPrice">₱{props.price}</p>
-                        <p className={isOutOfStock ? "FoodStock FoodStock--empty" : "FoodStock"}>
-                            {isOutOfStock ? "Out of stock" : `${stock} left`}
-                        </p>
+                        {isOutOfStock && <p className="FoodStock FoodStock--empty">Out of stock</p>}
                     </div>
                     <button
                         className={`AddIconButton ${isAdding ? "AddIconButton--active" : ""}`}

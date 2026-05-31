@@ -203,6 +203,15 @@ function AdminDashboardBody(props) {
     stream.addEventListener("order-created", () => {
       loadAdminData({ quiet: true });
       setNewOrderNotice("New order received.");
+      // Popup notification for admin
+      if (Notification.permission === "granted") {
+        new Notification("New Order Received!", {
+          body: "A student just placed a new order. Check the queue!",
+          icon: "/favicon.svg"
+        });
+      } else {
+        alert("New Order Received! A student just placed a new order.");
+      }
     });
 
     stream.addEventListener("order-updated", () => {
@@ -350,6 +359,100 @@ function AdminDashboardBody(props) {
   const queueOrders = orders.filter((order) => !["Picked up", "Cancelled"].includes(order.status));
   const completedOrders = orders.filter((order) => ["Picked up", "Cancelled"].includes(order.status));
   const mostOrdered = report?.mostOrdered || [];
+
+  function handlePrintReport() {
+    const printWindow = window.open('', '_blank');
+    const today = new Date().toLocaleDateString('en-PH', { dateStyle: 'long' });
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>NUEats Sales Report - ${today}</title>
+          <style>
+            body { font-family: sans-serif; padding: 40px; color: #333; }
+            h1 { color: #2C3C94; border-bottom: 2px solid #2C3C94; padding-bottom: 10px; }
+            h2 { margin-top: 30px; color: #666; font-size: 18px; text-transform: uppercase; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
+            th { background-color: #f8f9fa; color: #888; font-size: 12px; }
+            .summary-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
+            .summary-item { background: #f0f2ff; padding: 15px; border-radius: 8px; }
+            .summary-item p { margin: 0; font-size: 12px; color: #666; }
+            .summary-item strong { font-size: 20px; color: #2C3C94; }
+            @media print { .no-print { display: none; } }
+          </style>
+        </head>
+        <body>
+          <h1>NUEats Sales & Analytics Report</h1>
+          <p>Generated on: ${today}</p>
+
+          <div class="summary-box">
+            <div class="summary-item">
+              <p>Today's Earnings</p>
+              <strong>${peso(report?.dailyEarnings)}</strong>
+            </div>
+            <div class="summary-item">
+              <p>Monthly Earnings</p>
+              <strong>${peso(report?.monthlyEarnings)}</strong>
+            </div>
+            <div class="summary-item">
+              <p>Yearly Earnings</p>
+              <strong>${peso(report?.yearlyEarnings)}</strong>
+            </div>
+          </div>
+
+          <h2>Most Ordered Food</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>RANK</th>
+                <th>ITEM NAME</th>
+                <th>QUANTITY SOLD</th>
+                <th>TOTAL SALES</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${mostOrdered.map((item, index) => `
+                <tr>
+                  <td>${index + 1}</td>
+                  <td>${item.name}</td>
+                  <td>${item.quantity}</td>
+                  <td>${peso(item.sales)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <h2>Daily Breakdown (Last 14 Days)</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>PERIOD</th>
+                <th>TOTAL REVENUE</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${(report?.daily || []).map(row => `
+                <tr>
+                  <td>${row.period}</td>
+                  <td>${peso(row.total)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <div style="margin-top: 50px; text-align: center; font-size: 12px; color: #999;">
+            © ${new Date().getFullYear()} NUEats POS System - Private & Confidential
+          </div>
+
+          <script>
+            window.onload = function() { window.print(); window.close(); };
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  }
   const menuByCategory = menu.reduce((groups, item) => {
     const category = item.category || "Other";
     groups[category] = groups[category] || [];
@@ -388,12 +491,12 @@ function AdminDashboardBody(props) {
           <strong>{peso(report?.monthlyEarnings)}</strong>
         </div>
         <div className="StatCard">
-          <p>Active queue</p>
-          <strong>{report?.activeQueue || 0}</strong>
+          <p>This year</p>
+          <strong>{peso(report?.yearlyEarnings)}</strong>
         </div>
         <div className="StatCard">
-          <p>Pending payments</p>
-          <strong>{report?.pendingPayments || 0}</strong>
+          <p>Active queue</p>
+          <strong>{report?.activeQueue || 0}</strong>
         </div>
       </div>
 
@@ -426,6 +529,7 @@ function AdminDashboardBody(props) {
                     <div>
                       <p className="QueueNumber">Queue #{index + 1}</p>
                       <h2>Order #{order.orderId}</h2>
+                      <p style={{ fontWeight: '800', color: '#2C3C94', margin: '4px 0' }}>Customer: {order.studentName}</p>
                       <p className="MutedText">{formatDate(order.createdAt)} · {order.paymentMethod.toUpperCase()}</p>
                     </div>
                     <strong>{peso(order.total)}</strong>
@@ -733,7 +837,17 @@ function AdminDashboardBody(props) {
       {props.currentTab === "Reports" && (
         <div className="AdminGrid">
           <section className="AdminContent">
-            <h1>Most Ordered Food</h1>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h1>Most Ordered Food</h1>
+              <button
+                type="button"
+                className="RefreshButton"
+                onClick={handlePrintReport}
+                style={{ backgroundColor: '#2C3C94', color: 'white' }}
+              >
+                Print Report
+              </button>
+            </div>
             <div className="RankingList">
               {mostOrdered.length ? mostOrdered.map((item, index) => (
                 <div className="RankingRow" key={item.name}>
@@ -760,6 +874,11 @@ function AdminDashboardBody(props) {
                 rows={report?.monthly || []}
                 periodFormatter={(period) => new Date(period).toLocaleDateString("en-PH", { month: "short" })}
               />
+              <EarningsChart
+                title="Yearly Earnings"
+                rows={report?.yearly || []}
+                periodFormatter={(period) => new Date(period).toLocaleDateString("en-PH", { year: "numeric" })}
+              />
             </div>
             <div className="ReportColumns">
               <div>
@@ -776,6 +895,15 @@ function AdminDashboardBody(props) {
                 {(report?.monthly || []).map((row) => (
                   <p className="ReportRow" key={row.period}>
                     <span>{row.period.slice(0, 7)}</span>
+                    <strong>{peso(row.total)}</strong>
+                  </p>
+                ))}
+              </div>
+              <div>
+                <h2>Yearly</h2>
+                {(report?.yearly || []).map((row) => (
+                  <p className="ReportRow" key={row.period}>
+                    <span>{row.period.slice(0, 4)}</span>
                     <strong>{peso(row.total)}</strong>
                   </p>
                 ))}
