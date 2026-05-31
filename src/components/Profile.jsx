@@ -71,7 +71,6 @@ function Profile(props) {
           </div>
 
           <div className="ProfileActions">
-            <button className="EditButton" onClick={() => setEditing(true)}>Edit Profile</button>
             <button className="LogoutButton" onClick={() => props.onLogout && props.onLogout()}>Log out</button>
           </div>
 
@@ -88,32 +87,7 @@ function Profile(props) {
             </div>
           )}
         </>
-      ) : (
-        <div className="ProfileForm">
-          <div className="ProfileAvatar ProfileAvatar--editing" aria-hidden="true">
-            {(profile.name || "U").trim().slice(0, 1).toUpperCase()}
-          </div>
-
-          <label className="InputLabel">Name</label>
-          <input className="TextInput" value={profile.name} onChange={(e) => handleChange("name", e.target.value)} />
-
-          <label className="InputLabel">{props.isAdmin ? "Staff ID" : "Student ID"}</label>
-          <input
-            className="TextInput TextInput--readonly"
-            value={profile.studentId}
-            readOnly
-            aria-readonly="true"
-          />
-          {!props.isAdmin && <p className="InputHint">Student number cannot be edited here.</p>}
-
-          {error && <p className="FormError">{error}</p>}
-
-          <div className="ProfileActions">
-            <button className="SaveButton" onClick={handleSave}>Save</button>
-            <button className="CancelButton" onClick={() => { setProfile(initial); setEditing(false); setError(""); }}>Cancel</button>
-          </div>
-        </div>
-      )}
+      ) : null}
 
       <div className="ProfileDivider" />
     </div>

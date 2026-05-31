@@ -1,0 +1,183 @@
+.ReceiptOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.ReceiptContainer {
+  background-color: white;
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  border-radius: 4px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  position: relative;
+  font-family: 'Inter', sans-serif;
+  color: #333;
+}
+
+.ReceiptCloseButton {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #999;
+}
+
+.ReceiptHeader {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.ReceiptLogo {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 24px;
+  color: #2C3C94;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.ReceiptHeader h1 {
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #666;
+  margin: 10px 0;
+  font-weight: 400;
+}
+
+.ReceiptOrderNumber {
+  font-weight: 800;
+  font-size: 18px;
+  margin: 5px 0;
+}
+
+.ReceiptDate {
+  font-size: 12px;
+  color: #888;
+}
+
+.ReceiptDivider {
+  border-top: 1px dashed #ccc;
+  margin: 15px 0;
+}
+
+.ReceiptItemsHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 800;
+  color: #888;
+  margin-bottom: 10px;
+  padding: 0 5px;
+}
+
+.ReceiptItems {
+  margin: 10px 0;
+}
+
+.ReceiptItemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.ItemName {
+  flex: 1;
+  font-weight: 500;
+}
+
+.ItemQty {
+  width: 40px;
+  text-align: center;
+  color: #666;
+}
+
+.ItemPrice {
+  width: 80px;
+  text-align: right;
+  font-weight: 600;
+}
+
+.ReceiptTotalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  font-size: 16px;
+}
+
+.ReceiptTotalRow strong {
+  font-size: 20px;
+  color: #2C3C94;
+}
+
+.ReceiptInfo {
+  margin-top: 15px;
+}
+
+.InfoRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.InfoRow span:first-child {
+  color: #888;
+}
+
+.StatusText {
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.StatusText.ready-for-pickup { color: #4CAF50; }
+.StatusText.preparing { color: #FF9800; }
+.StatusText.queued { color: #2196F3; }
+
+.ReceiptMessage {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 12px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.ReceiptBarcode {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.BarcodeStripes {
+  height: 40px;
+  background: repeating-linear-gradient(
+    90deg,
+    #000,
+    #000 2px,
+    #fff 2px,
+    #fff 4px
+  );
+  margin-bottom: 5px;
+  opacity: 0.8;
+}
+
+.ReceiptBarcode p {
+  font-family: monospace;
+  font-size: 10px;
+  color: #888;
+  margin: 0;
+}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import '../styles/components/admindashboardbody.css';
 import { apiFetch, apiUrl } from '../api';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 
 const orderStatuses = ["Queued", "Preparing", "Ready for pickup", "Picked up", "Cancelled"];
 const paymentStatuses = ["Pending payment", "Payment received", "Refunded"];
@@ -127,6 +128,7 @@ function AdminDashboardBody(props) {
   const [newOrderNotice, setNewOrderNotice] = useState("");
   const [menuForm, setMenuForm] = useState(emptyMenuForm);
   const [savingMenu, setSavingMenu] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const knownOrderIds = useRef(new Set());
   const loadedOnce = useRef(false);
 
@@ -245,10 +247,12 @@ function AdminDashboardBody(props) {
       imageUrl: item.imageUrl || "",
       isAvailable: item.isAvailable !== false,
     });
+    setIsEditing(true);
   }
 
   function resetMenuForm() {
     setMenuForm(emptyMenuForm);
+    setIsEditing(false);
   }
 
   async function saveMenuItem(event) {
@@ -500,25 +504,20 @@ function AdminDashboardBody(props) {
             <div>
               <p className="WindowEyebrow">Menu Window</p>
               <h1>Menu Management</h1>
-              <p>Add, edit, hide, or remove food items shown to students.</p>
+              <p>Add new food items shown to students.</p>
             </div>
             <div className="MenuCountBadge">{menu.length} items</div>
           </div>
 
           <form className="MenuEditor" onSubmit={saveMenuItem}>
             <div className="MenuEditorHeader">
-              <h2>{menuForm.key ? `Edit item #${menuForm.key}` : "Add menu item"}</h2>
-              {menuForm.key && (
-                <button type="button" className="TextActionButton" onClick={resetMenuForm}>
-                  Cancel edit
-                </button>
-              )}
+              <h2>Add menu item</h2>
             </div>
             <div className="MenuEditorGrid">
               <label>
                 Name
                 <input
-                  value={menuForm.name}
+                  value={isEditing ? "" : menuForm.name}
                   onChange={(event) => updateMenuForm("name", event.target.value)}
                   placeholder="Food name"
                   required
@@ -527,7 +526,7 @@ function AdminDashboardBody(props) {
               <label>
                 Price
                 <input
-                  value={menuForm.price}
+                  value={isEditing ? "" : menuForm.price}
                   onChange={(event) => updateMenuForm("price", event.target.value)}
                   type="number"
                   min="0"
@@ -539,7 +538,7 @@ function AdminDashboardBody(props) {
               <label>
                 Stock
                 <input
-                  value={menuForm.stock}
+                  value={isEditing ? "" : menuForm.stock}
                   onChange={(event) => updateMenuForm("stock", event.target.value)}
                   type="number"
                   min="0"
@@ -551,7 +550,7 @@ function AdminDashboardBody(props) {
               <label>
                 Category
                 <select
-                  value={menuForm.category}
+                  value={isEditing ? "Meal" : menuForm.category}
                   onChange={(event) => updateMenuForm("category", event.target.value)}
                 >
                   <option>Meal</option>
@@ -570,7 +569,7 @@ function AdminDashboardBody(props) {
               <label className="MenuAvailability">
                 <input
                   type="checkbox"
-                  checked={menuForm.isAvailable}
+                  checked={isEditing ? true : menuForm.isAvailable}
                   onChange={(event) => updateMenuForm("isAvailable", event.target.checked)}
                 />
                 Available to students
@@ -579,13 +578,13 @@ function AdminDashboardBody(props) {
             <label className="MenuDescriptionField">
               Description
               <textarea
-                value={menuForm.description}
+                value={isEditing ? "" : menuForm.description}
                 onChange={(event) => updateMenuForm("description", event.target.value)}
                 placeholder="Short menu description"
                 rows={3}
               />
             </label>
-            {menuForm.imageUrl && (
+            {(!isEditing && menuForm.imageUrl) && (
               <div className="MenuImagePreview">
                 <img src={menuForm.imageUrl} alt={`${menuForm.name || "Menu item"} preview`} />
                 <button type="button" className="TextActionButton" onClick={() => updateMenuForm("imageUrl", "")}>
@@ -593,10 +592,108 @@ function AdminDashboardBody(props) {
                 </button>
               </div>
             )}
-            <button type="submit" className="RefreshButton" disabled={savingMenu}>
-              {savingMenu ? "Saving..." : menuForm.key ? "Save Changes" : "Add Item"}
+            <button type="submit" className="RefreshButton" disabled={savingMenu || isEditing}>
+              {savingMenu ? "Saving..." : "Add Item"}
             </button>
           </form>
+
+          <Dialog open={isEditing} onClose={resetMenuForm} maxWidth="md" fullWidth>
+            <DialogTitle>Edit Item: {menuForm.name}</DialogTitle>
+            <DialogContent>
+              <form className="MenuEditor" onSubmit={saveMenuItem} style={{ boxShadow: 'none', padding: 0 }}>
+                <div className="MenuEditorGrid">
+                  <label>
+                    Name
+                    <input
+                      value={menuForm.name}
+                      onChange={(event) => updateMenuForm("name", event.target.value)}
+                      placeholder="Food name"
+                      required
+                    />
+                  </label>
+                  <label>
+                    Price
+                    <input
+                      value={menuForm.price}
+                      onChange={(event) => updateMenuForm("price", event.target.value)}
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      placeholder="0.00"
+                      required
+                    />
+                  </label>
+                  <label>
+                    Stock
+                    <input
+                      value={menuForm.stock}
+                      onChange={(event) => updateMenuForm("stock", event.target.value)}
+                      type="number"
+                      min="0"
+                      step="1"
+                      placeholder="0"
+                      required
+                    />
+                  </label>
+                  <label>
+                    Category
+                    <select
+                      value={menuForm.category}
+                      onChange={(event) => updateMenuForm("category", event.target.value)}
+                    >
+                      <option>Meal</option>
+                      <option>Snack</option>
+                      <option>Drink</option>
+                    </select>
+                  </label>
+                  <label>
+                    Image
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleMenuImageChange}
+                    />
+                  </label>
+                  <label className="MenuAvailability">
+                    <input
+                      type="checkbox"
+                      checked={menuForm.isAvailable}
+                      onChange={(event) => updateMenuForm("isAvailable", event.target.checked)}
+                    />
+                    Available to students
+                  </label>
+                </div>
+                <label className="MenuDescriptionField">
+                  Description
+                  <textarea
+                    value={menuForm.description}
+                    onChange={(event) => updateMenuForm("description", event.target.value)}
+                    placeholder="Short menu description"
+                    rows={3}
+                  />
+                </label>
+                {menuForm.imageUrl && (
+                  <div className="MenuImagePreview">
+                    <img src={menuForm.imageUrl} alt={`${menuForm.name || "Menu item"} preview`} />
+                    <button type="button" className="TextActionButton" onClick={() => updateMenuForm("imageUrl", "")}>
+                      Remove image
+                    </button>
+                  </div>
+                )}
+              </form>
+            </DialogContent>
+            <DialogActions style={{ padding: '15px 24px' }}>
+              <Button onClick={resetMenuForm} color="inherit">Cancel</Button>
+              <Button
+                variant="contained"
+                onClick={saveMenuItem}
+                disabled={savingMenu}
+                style={{ backgroundColor: '#2C3C94' }}
+              >
+                {savingMenu ? "Saving..." : "Save Changes"}
+              </Button>
+            </DialogActions>
+          </Dialog>
 
           <div className="MenuCategoryGrid">
             {Object.entries(menuByCategory).map(([category, items]) => (

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import "../styles/components/myorders.css";
 import { apiFetch, apiUrl } from "../api";
+import Receipt from "./Receipt";
 
 const paymentLabels = {
   gcash: "GCash",
@@ -30,6 +31,7 @@ function MyOrders({ token, refreshKey = 0, onClose, isNested = false }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const loadOrders = useCallback(async ({ quiet = false } = {}) => {
     if (!token) {
@@ -122,7 +124,12 @@ function MyOrders({ token, refreshKey = 0, onClose, isNested = false }) {
       {!loading && !error && orders.length > 0 && (
         <div className="MyOrdersList">
           {orders.map((order) => (
-            <article className="MyOrderCard" key={order.orderId}>
+            <article
+              className="MyOrderCard"
+              key={order.orderId}
+              onClick={() => setSelectedOrder(order)}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="MyOrderTopline">
                 <div>
                   <h2>Order #{order.orderId}</h2>
@@ -150,6 +157,10 @@ function MyOrders({ token, refreshKey = 0, onClose, isNested = false }) {
             </article>
           ))}
         </div>
+      )}
+
+      {selectedOrder && (
+        <Receipt order={selectedOrder} onClose={() => setSelectedOrder(null)} />
       )}
     </div>
   );

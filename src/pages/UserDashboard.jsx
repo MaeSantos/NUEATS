@@ -8,6 +8,7 @@ import Drawer from "@mui/material/Drawer";
 import Cart from "../components/Cart";
 import Profile from "../components/Profile";
 import MyOrders from "../components/MyOrders";
+import Receipt from "../components/Receipt";
 import { apiFetch } from "../api";
 import { Capacitor } from "@capacitor/core";
 import { LocalNotifications } from "@capacitor/local-notifications";
@@ -101,6 +102,7 @@ function UserDashboard() {
   const [orderMessage, setOrderMessage] = useState("");
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [ordersRefreshKey, setOrdersRefreshKey] = useState(0);
+  const [lastOrder, setLastOrder] = useState(null);
   const prevStatusRef = useRef(orderStatus);
 
   function filter(newCategory) {
@@ -230,10 +232,11 @@ function UserDashboard() {
       setCheckoutUrl(data.checkoutUrl || null);
       setOrderMessage(`Your order is placed and being prepared. Payment: ${data.paymentMethod}`);
       setOrdersRefreshKey((key) => key + 1);
+      setLastOrder(data);
 
       setCartItems([]);
       setPaymentInfo("");
-      setCartToOpen(true);
+      setCartToOpen(false); // Close cart so receipt is visible
     } catch (error) {
       console.error(error);
       const userMessage = error.message || "Unable to place your order. Please try again.";
@@ -413,6 +416,10 @@ function UserDashboard() {
           onClose={() => toggleOrdersDrawer(false)}
         />
       </Drawer>
+
+      {lastOrder && (
+        <Receipt order={lastOrder} onClose={() => setLastOrder(null)} />
+      )}
     </div>
   );
 }
