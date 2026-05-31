@@ -863,7 +863,7 @@ function AdminDashboardBody(props) {
               variant="contained"
               style={{ backgroundColor: '#2C3C94', marginRight: '10px', textTransform: 'none', fontWeight: 700 }}
             >
-              Print / Save PDF
+              Print PDF
             </Button>
             <Button
               onClick={() => setShowReportPreview(false)}
@@ -874,17 +874,38 @@ function AdminDashboardBody(props) {
             </Button>
           </div>
         </DialogTitle>
-        <DialogContent style={{ backgroundColor: '#f5f5f5', padding: '40px 0' }}>
+        <DialogContent style={{ backgroundColor: '#f5f5f5', padding: '20px 0' }}>
+          <style>
+            {\`
+              @media print {
+                body * { visibility: hidden; }
+                .PrintableReport, .PrintableReport * { visibility: visible; }
+                .PrintableReport {
+                  position: absolute !important;
+                  left: 0 !important;
+                  top: 0 !important;
+                  width: 100% !important;
+                  margin: 0 !important;
+                  padding: 15mm !important;
+                  box-shadow: none !important;
+                  border: none !important;
+                }
+                .no-print { display: none !important; }
+                @page { margin: 0; }
+              }
+            \`}
+          </style>
           <div className="PrintableReport" style={{
-            padding: '50px',
+            padding: '5% 7%',
             color: '#333',
             backgroundColor: 'white',
-            width: '210mm',
+            width: 'min(210mm, 95%)',
             minHeight: '297mm',
             margin: '0 auto',
             boxShadow: '0 0 20px rgba(0,0,0,0.1)',
             boxSizing: 'border-box',
-            position: 'relative'
+            position: 'relative',
+            fontSize: '14px'
           }}>
             {/* Watermark for preview */}
             <div className="no-print" style={{
@@ -892,7 +913,7 @@ function AdminDashboardBody(props) {
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%) rotate(-45deg)',
-              fontSize: '100px',
+              fontSize: 'min(8vw, 100px)',
               color: 'rgba(0,0,0,0.03)',
               fontWeight: 900,
               pointerEvents: 'none',
@@ -902,14 +923,14 @@ function AdminDashboardBody(props) {
               NUEATS OFFICIAL
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '4px solid #2C3C94', paddingBottom: '20px', position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '4px solid #2C3C94', paddingBottom: '20px', position: 'relative', zIndex: 1, gap: '10px' }}>
               <div>
-                <h1 style={{ color: '#2C3C94', fontSize: '32px', margin: 0, fontWeight: 900, letterSpacing: '-1px' }}>NUEats</h1>
-                <p style={{ margin: '5px 0 0', color: '#666', fontSize: '14px', fontWeight: 600 }}>Campus Dining Solutions</p>
+                <h1 style={{ color: '#2C3C94', fontSize: 'min(6vw, 32px)', margin: 0, fontWeight: 900, letterSpacing: '-1px' }}>NUEats</h1>
+                <p style={{ margin: '5px 0 0', color: '#666', fontSize: 'min(3vw, 14px)', fontWeight: 600 }}>Campus Dining Solutions</p>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <h2 style={{ margin: 0, fontSize: '18px', color: '#333' }}>SALES & ANALYTICS</h2>
-                <p style={{ margin: '5px 0 0', color: '#888', fontSize: '12px' }}>
+                <h2 style={{ margin: 0, fontSize: 'min(4vw, 18px)', color: '#333' }}>SALES & ANALYTICS</h2>
+                <p style={{ margin: '5px 0 0', color: '#888', fontSize: 'min(2.5vw, 12px)' }}>
                   Generated: {new Intl.DateTimeFormat('en-PH', {
                     timeZone: 'Asia/Manila',
                     year: 'numeric',
@@ -922,46 +943,48 @@ function AdminDashboardBody(props) {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px', marginTop: '30px', position: 'relative', zIndex: 1 }}>
-              <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '4px', borderLeft: '5px solid #2C3C94' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '15px', marginTop: '30px', position: 'relative', zIndex: 1 }}>
+              <div style={{ background: '#f8f9fa', padding: '15px', borderRadius: '4px', borderLeft: '5px solid #2C3C94' }}>
                 <p style={{ margin: 0, fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: 800 }}>Daily Revenue</p>
-                <strong style={{ fontSize: '24px', color: '#2C3C94' }}>{peso(report?.dailyEarnings)}</strong>
+                <strong style={{ fontSize: '1.2em', color: '#2C3C94' }}>{peso(report?.dailyEarnings)}</strong>
               </div>
-              <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '4px', borderLeft: '5px solid #FFD41C' }}>
+              <div style={{ background: '#f8f9fa', padding: '15px', borderRadius: '4px', borderLeft: '5px solid #FFD41C' }}>
                 <p style={{ margin: 0, fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: 800 }}>Monthly Revenue</p>
-                <strong style={{ fontSize: '24px', color: '#333' }}>{peso(report?.monthlyEarnings)}</strong>
+                <strong style={{ fontSize: '1.2em', color: '#333' }}>{peso(report?.monthlyEarnings)}</strong>
               </div>
-              <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '4px', borderLeft: '5px solid #4CAF50' }}>
+              <div style={{ background: '#f8f9fa', padding: '15px', borderRadius: '4px', borderLeft: '5px solid #4CAF50' }}>
                 <p style={{ margin: 0, fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: 800 }}>Annual Revenue</p>
-                <strong style={{ fontSize: '24px', color: '#333' }}>{peso(report?.yearlyEarnings)}</strong>
+                <strong style={{ fontSize: '1.2em', color: '#333' }}>{peso(report?.yearlyEarnings)}</strong>
               </div>
             </div>
 
             <div style={{ marginTop: '40px', position: 'relative', zIndex: 1 }}>
               <h3 style={{ fontSize: '16px', borderBottom: '1px solid #eee', paddingBottom: '10px', color: '#2C3C94', fontWeight: 800 }}>TOP PERFORMING PRODUCTS</h3>
-              <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
-                <thead>
-                  <tr style={{ textAlign: 'left' }}>
-                    <th style={{ padding: '12px 8px', borderBottom: '2px solid #333', fontSize: '11px', color: '#666' }}>RANK</th>
-                    <th style={{ padding: '12px 8px', borderBottom: '2px solid #333', fontSize: '11px', color: '#666' }}>ITEM NAME</th>
-                    <th style={{ padding: '12px 8px', borderBottom: '2px solid #333', fontSize: '11px', color: '#666', textAlign: 'center' }}>UNITS SOLD</th>
-                    <th style={{ padding: '12px 8px', borderBottom: '2px solid #333', fontSize: '11px', color: '#666', textAlign: 'right' }}>GROSS SALES</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {mostOrdered.map((item, index) => (
-                    <tr key={item.name}>
-                      <td style={{ padding: '12px 8px', borderBottom: '1px solid #eee', fontSize: '14px', fontWeight: 700, color: '#888' }}>{index + 1}</td>
-                      <td style={{ padding: '12px 8px', borderBottom: '1px solid #eee', fontSize: '14px', fontWeight: 600 }}>{item.name}</td>
-                      <td style={{ padding: '12px 8px', borderBottom: '1px solid #eee', fontSize: '14px', textAlign: 'center' }}>{item.quantity}</td>
-                      <td style={{ padding: '12px 8px', borderBottom: '1px solid #eee', fontSize: '14px', textAlign: 'right', fontWeight: 700 }}>{peso(item.sales)}</td>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+                  <thead>
+                    <tr style={{ textAlign: 'left' }}>
+                      <th style={{ padding: '12px 8px', borderBottom: '2px solid #333', fontSize: '11px', color: '#666' }}>RANK</th>
+                      <th style={{ padding: '12px 8px', borderBottom: '2px solid #333', fontSize: '11px', color: '#666' }}>ITEM NAME</th>
+                      <th style={{ padding: '12px 8px', borderBottom: '2px solid #333', fontSize: '11px', color: '#666', textAlign: 'center' }}>UNITS SOLD</th>
+                      <th style={{ padding: '12px 8px', borderBottom: '2px solid #333', fontSize: '11px', color: '#666', textAlign: 'right' }}>GROSS SALES</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {mostOrdered.map((item, index) => (
+                      <tr key={item.name}>
+                        <td style={{ padding: '12px 8px', borderBottom: '1px solid #eee', fontSize: '14px', fontWeight: 700, color: '#888' }}>{index + 1}</td>
+                        <td style={{ padding: '12px 8px', borderBottom: '1px solid #eee', fontSize: '14px', fontWeight: 600 }}>{item.name}</td>
+                        <td style={{ padding: '12px 8px', borderBottom: '1px solid #eee', fontSize: '14px', textAlign: 'center' }}>{item.quantity}</td>
+                        <td style={{ padding: '12px 8px', borderBottom: '1px solid #eee', fontSize: '14px', textAlign: 'right', fontWeight: 700 }}>{peso(item.sales)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '30px', marginTop: '40px', position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '30px', marginTop: '40px', position: 'relative', zIndex: 1 }}>
               <div>
                 <h3 style={{ fontSize: '14px', borderBottom: '1px solid #eee', paddingBottom: '10px', color: '#2C3C94', fontWeight: 800 }}>DAILY BREAKDOWN</h3>
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
