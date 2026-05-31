@@ -859,7 +859,14 @@ function AdminDashboardBody(props) {
         <DialogContent>
           <div className="PrintableReport" style={{ padding: '20px', color: '#333', backgroundColor: 'white' }}>
             <h1 style={{ color: '#2C3C94', borderBottom: '2px solid #2C3C94', paddingBottom: '10px', margin: 0 }}>NUEats Sales & Analytics Report</h1>
-            <p>Generated on: {new Date().toLocaleDateString('en-PH', { dateStyle: 'long', timeStyle: 'short' })}</p>
+            <p>Generated on: {new Intl.DateTimeFormat('en-PH', {
+              timeZone: 'Asia/Manila',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit'
+            }).format(new Date())}</p>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginTop: '20px' }}>
               <div style={{ background: '#f0f2ff', padding: '15px', borderRadius: '8px' }}>

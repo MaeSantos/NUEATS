@@ -17,24 +17,6 @@ function Profile(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.name, props.profile]);
 
-  function handleImageChange(event) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      setError("Please choose an image file.");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = String(reader.result || "");
-      if (props.onSave) props.onSave({ name: profile.name, imageUrl: base64 });
-      setProfile(p => ({ ...p, imageUrl: base64 }));
-    };
-    reader.readAsDataURL(file);
-  }
-
   function handleLogout() {
     if (window.confirm("Are you sure you want to log out? Any unsaved changes may be lost.")) {
       if (props.onLogout) props.onLogout();
@@ -60,10 +42,6 @@ function Profile(props) {
             (profile.name || "U").trim().slice(0, 1).toUpperCase()
           )}
         </div>
-        <label className="ChangePhotoLabel">
-          Change Photo
-          <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageChange} />
-        </label>
       </div>
 
       {error && <p className="FormError" style={{ textAlign: 'center' }}>{error}</p>}
