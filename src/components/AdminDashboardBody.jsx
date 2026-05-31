@@ -637,7 +637,6 @@ function AdminDashboardBody(props) {
         <div className="AdminGrid">
           <section className="AdminContent">
             <h1>Most Ordered Food</h1>
-            <MostOrderedChart rows={mostOrdered} />
             <div className="RankingList">
               {mostOrdered.length ? mostOrdered.map((item, index) => (
                 <div className="RankingRow" key={item.name}>
