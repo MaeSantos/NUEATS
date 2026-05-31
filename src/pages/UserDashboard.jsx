@@ -349,6 +349,7 @@ function UserDashboard() {
         onSelectFilter={filter}
         category={category}
         userName={userProfile.name}
+        userProfile={userProfile}
         searchQuery={searchQuery}
         onSearch={setSearchQuery}
         cartItemCount={cartItems.reduce((sum, item) => sum + (item.quantity || 0), 0)}

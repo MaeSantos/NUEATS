@@ -224,7 +224,7 @@ function AdminDashboardBody(props) {
           console.error("Local notification error", err);
         }
       } else if (Notification.permission === "granted") {
-        new Notification("New Order Received! 🛒", {
+        new Notification("New Order Received! ", {
           body: "A student just placed a new order. Check the queue!",
           icon: "/favicon.svg"
         });

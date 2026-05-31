@@ -4,6 +4,7 @@ import logoText from '../assets/icons/Logo Text.png';
 
 function AdminHeader(props) {
   const tabs = ["Orders", "Menu", "Reports"];
+  const adminProfile = props.adminProfile || {};
 
   return (
     <header className="AdminHeader">
@@ -11,8 +12,12 @@ function AdminHeader(props) {
         <div id="AdminTopRow">
           <img src={logoText} alt="Logo" id="LogoText" />
           
-          <button className="NavButton" onClick={props.onOpenProfile}>
-            <img src={userIcon} className="NavIcon" alt="User" />
+          <button className="NavButton ProfileNavButton" onClick={props.onOpenProfile}>
+            {adminProfile.imageUrl ? (
+              <img src={adminProfile.imageUrl} className="NavProfilePic" alt="User" />
+            ) : (
+              <img src={userIcon} className="NavIcon" alt="User" />
+            )}
           </button>
         </div>
         

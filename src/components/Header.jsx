@@ -2,10 +2,11 @@ import '../styles/components/header.css'
 import logoText from '../assets/icons/Logo Text.png'
 import cart from '../assets/icons/Cart.png'
 import search from '../assets/icons/Search.png'
-import user from '../assets/icons/User.png'
+import defaultUserIcon from '../assets/icons/User.png'
 
 function Header(props) {
   const cartCount = Number(props.cartItemCount || 0);
+  const userProfile = props.userProfile || {};
 
   return (
     <header>
@@ -27,8 +28,12 @@ function Header(props) {
 
               <div className="UserInfo">
                 <span className="UserName">{props.userName || "Guest"}</span>
-                <button className="NavButton" onClick={props.onOpenProfile}>
-                  <img src={user} className="NavIcon" alt="User"/>
+                <button className="NavButton ProfileNavButton" onClick={props.onOpenProfile}>
+                  {userProfile.imageUrl ? (
+                    <img src={userProfile.imageUrl} className="NavProfilePic" alt="User"/>
+                  ) : (
+                    <img src={defaultUserIcon} className="NavIcon" alt="User"/>
+                  )}
                 </button>
               </div>
               <button className="NavButton CartNavButton" onClick={props.onOpenCart} aria-label={`Cart, ${cartCount} item${cartCount === 1 ? "" : "s"}`}>

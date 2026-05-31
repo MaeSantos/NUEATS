@@ -100,6 +100,7 @@ function AdminDashboard() {
     <div>
       <AdminHeader
         currentTab={currentTab}
+        adminProfile={adminProfile}
         onSelectTab={setCurrentTab}
         onOpenProfile={() => toggleProfileDrawer(true)}
       />
