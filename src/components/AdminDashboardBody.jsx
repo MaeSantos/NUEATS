@@ -848,83 +848,160 @@ function AdminDashboardBody(props) {
         </div>
       )}
 
-      <Dialog open={showReportPreview} onClose={() => setShowReportPreview(false)} maxWidth="lg" fullWidth>
-        <DialogTitle className="no-print" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          Report Preview
+      <Dialog open={showReportPreview} onClose={() => setShowReportPreview(false)} maxWidth="lg" fullWidth scroll="body">
+        <DialogTitle className="no-print" style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          borderBottom: '1px solid #eee',
+          padding: '16px 24px'
+        }}>
+          <span style={{ fontWeight: 800, color: '#2C3C94' }}>Business Analytics Report Preview</span>
           <div>
-            <Button onClick={handleActualPrint} variant="contained" style={{ backgroundColor: '#2C3C94', marginRight: '10px' }}>Print / PDF</Button>
-            <Button onClick={() => setShowReportPreview(false)}>Close</Button>
+            <Button
+              onClick={handleActualPrint}
+              variant="contained"
+              style={{ backgroundColor: '#2C3C94', marginRight: '10px', textTransform: 'none', fontWeight: 700 }}
+            >
+              Print / Save PDF
+            </Button>
+            <Button
+              onClick={() => setShowReportPreview(false)}
+              variant="outlined"
+              style={{ color: '#666', borderColor: '#ccc', textTransform: 'none', fontWeight: 700 }}
+            >
+              Close
+            </Button>
           </div>
         </DialogTitle>
-        <DialogContent>
-          <div className="PrintableReport" style={{ padding: '20px', color: '#333', backgroundColor: 'white' }}>
-            <h1 style={{ color: '#2C3C94', borderBottom: '2px solid #2C3C94', paddingBottom: '10px', margin: 0 }}>NUEats Sales & Analytics Report</h1>
-            <p>Generated on: {new Intl.DateTimeFormat('en-PH', {
-              timeZone: 'Asia/Manila',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: '2-digit'
-            }).format(new Date())}</p>
+        <DialogContent style={{ backgroundColor: '#f5f5f5', padding: '40px 0' }}>
+          <div className="PrintableReport" style={{
+            padding: '50px',
+            color: '#333',
+            backgroundColor: 'white',
+            width: '210mm',
+            minHeight: '297mm',
+            margin: '0 auto',
+            boxShadow: '0 0 20px rgba(0,0,0,0.1)',
+            boxSizing: 'border-box',
+            position: 'relative'
+          }}>
+            {/* Watermark for preview */}
+            <div className="no-print" style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%) rotate(-45deg)',
+              fontSize: '100px',
+              color: 'rgba(0,0,0,0.03)',
+              fontWeight: 900,
+              pointerEvents: 'none',
+              whiteSpace: 'nowrap',
+              zIndex: 0
+            }}>
+              NUEATS OFFICIAL
+            </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginTop: '20px' }}>
-              <div style={{ background: '#f0f2ff', padding: '15px', borderRadius: '8px' }}>
-                <p style={{ margin: 0, fontSize: '12px', color: '#666' }}>Today's Earnings</p>
-                <strong style={{ fontSize: '20px', color: '#2C3C94' }}>{peso(report?.dailyEarnings)}</strong>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '4px solid #2C3C94', paddingBottom: '20px', position: 'relative', zIndex: 1 }}>
+              <div>
+                <h1 style={{ color: '#2C3C94', fontSize: '32px', margin: 0, fontWeight: 900, letterSpacing: '-1px' }}>NUEats</h1>
+                <p style={{ margin: '5px 0 0', color: '#666', fontSize: '14px', fontWeight: 600 }}>Campus Dining Solutions</p>
               </div>
-              <div style={{ background: '#f0f2ff', padding: '15px', borderRadius: '8px' }}>
-                <p style={{ margin: 0, fontSize: '12px', color: '#666' }}>Monthly Earnings</p>
-                <strong style={{ fontSize: '20px', color: '#2C3C94' }}>{peso(report?.monthlyEarnings)}</strong>
-              </div>
-              <div style={{ background: '#f0f2ff', padding: '15px', borderRadius: '8px' }}>
-                <p style={{ margin: 0, fontSize: '12px', color: '#666' }}>Yearly Earnings</p>
-                <strong style={{ fontSize: '20px', color: '#2C3C94' }}>{peso(report?.yearlyEarnings)}</strong>
+              <div style={{ textAlign: 'right' }}>
+                <h2 style={{ margin: 0, fontSize: '18px', color: '#333' }}>SALES & ANALYTICS</h2>
+                <p style={{ margin: '5px 0 0', color: '#888', fontSize: '12px' }}>
+                  Generated: {new Intl.DateTimeFormat('en-PH', {
+                    timeZone: 'Asia/Manila',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit'
+                  }).format(new Date())}
+                </p>
               </div>
             </div>
 
-            <h2 style={{ marginTop: '30px', color: '#666', fontSize: '18px', textTransform: 'uppercase' }}>Most Ordered Food</h2>
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
-              <thead>
-                <tr style={{ backgroundColor: '#f8f9fa' }}>
-                  <th style={{ textAlign: 'left', padding: '12px', borderBottom: '1px solid #eee', color: '#888', fontSize: '12px' }}>RANK</th>
-                  <th style={{ textAlign: 'left', padding: '12px', borderBottom: '1px solid #eee', color: '#888', fontSize: '12px' }}>ITEM NAME</th>
-                  <th style={{ textAlign: 'left', padding: '12px', borderBottom: '1px solid #eee', color: '#888', fontSize: '12px' }}>QUANTITY SOLD</th>
-                  <th style={{ textAlign: 'left', padding: '12px', borderBottom: '1px solid #eee', color: '#888', fontSize: '12px' }}>TOTAL SALES</th>
-                </tr>
-              </thead>
-              <tbody>
-                {mostOrdered.map((item, index) => (
-                  <tr key={item.name}>
-                    <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>{index + 1}</td>
-                    <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>{item.name}</td>
-                    <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>{item.quantity}</td>
-                    <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>{peso(item.sales)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px', marginTop: '30px', position: 'relative', zIndex: 1 }}>
+              <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '4px', borderLeft: '5px solid #2C3C94' }}>
+                <p style={{ margin: 0, fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: 800 }}>Daily Revenue</p>
+                <strong style={{ fontSize: '24px', color: '#2C3C94' }}>{peso(report?.dailyEarnings)}</strong>
+              </div>
+              <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '4px', borderLeft: '5px solid #FFD41C' }}>
+                <p style={{ margin: 0, fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: 800 }}>Monthly Revenue</p>
+                <strong style={{ fontSize: '24px', color: '#333' }}>{peso(report?.monthlyEarnings)}</strong>
+              </div>
+              <div style={{ background: '#f8f9fa', padding: '20px', borderRadius: '4px', borderLeft: '5px solid #4CAF50' }}>
+                <p style={{ margin: 0, fontSize: '11px', color: '#888', textTransform: 'uppercase', fontWeight: 800 }}>Annual Revenue</p>
+                <strong style={{ fontSize: '24px', color: '#333' }}>{peso(report?.yearlyEarnings)}</strong>
+              </div>
+            </div>
 
-            <h2 style={{ marginTop: '30px', color: '#666', fontSize: '18px', textTransform: 'uppercase' }}>Daily Breakdown</h2>
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
-              <thead>
-                <tr style={{ backgroundColor: '#f8f9fa' }}>
-                  <th style={{ textAlign: 'left', padding: '12px', borderBottom: '1px solid #eee', color: '#888', fontSize: '12px' }}>PERIOD</th>
-                  <th style={{ textAlign: 'left', padding: '12px', borderBottom: '1px solid #eee', color: '#888', fontSize: '12px' }}>TOTAL REVENUE</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(report?.daily || []).map(row => (
-                  <tr key={row.period}>
-                    <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>{row.period}</td>
-                    <td style={{ padding: '12px', borderBottom: '1px solid #eee' }}>{peso(row.total)}</td>
+            <div style={{ marginTop: '40px', position: 'relative', zIndex: 1 }}>
+              <h3 style={{ fontSize: '16px', borderBottom: '1px solid #eee', paddingBottom: '10px', color: '#2C3C94', fontWeight: 800 }}>TOP PERFORMING PRODUCTS</h3>
+              <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+                <thead>
+                  <tr style={{ textAlign: 'left' }}>
+                    <th style={{ padding: '12px 8px', borderBottom: '2px solid #333', fontSize: '11px', color: '#666' }}>RANK</th>
+                    <th style={{ padding: '12px 8px', borderBottom: '2px solid #333', fontSize: '11px', color: '#666' }}>ITEM NAME</th>
+                    <th style={{ padding: '12px 8px', borderBottom: '2px solid #333', fontSize: '11px', color: '#666', textAlign: 'center' }}>UNITS SOLD</th>
+                    <th style={{ padding: '12px 8px', borderBottom: '2px solid #333', fontSize: '11px', color: '#666', textAlign: 'right' }}>GROSS SALES</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {mostOrdered.map((item, index) => (
+                    <tr key={item.name}>
+                      <td style={{ padding: '12px 8px', borderBottom: '1px solid #eee', fontSize: '14px', fontWeight: 700, color: '#888' }}>{index + 1}</td>
+                      <td style={{ padding: '12px 8px', borderBottom: '1px solid #eee', fontSize: '14px', fontWeight: 600 }}>{item.name}</td>
+                      <td style={{ padding: '12px 8px', borderBottom: '1px solid #eee', fontSize: '14px', textAlign: 'center' }}>{item.quantity}</td>
+                      <td style={{ padding: '12px 8px', borderBottom: '1px solid #eee', fontSize: '14px', textAlign: 'right', fontWeight: 700 }}>{peso(item.sales)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-            <div style={{ marginTop: '50px', textAlign: 'center', fontSize: '12px', color: '#999' }}>
-              © {new Date().getFullYear()} NUEats POS System - Private & Confidential
+            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '30px', marginTop: '40px', position: 'relative', zIndex: 1 }}>
+              <div>
+                <h3 style={{ fontSize: '14px', borderBottom: '1px solid #eee', paddingBottom: '10px', color: '#2C3C94', fontWeight: 800 }}>DAILY BREAKDOWN</h3>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <tbody>
+                    {(report?.daily || []).slice(0, 7).map(row => (
+                      <tr key={row.period}>
+                        <td style={{ padding: '8px 0', borderBottom: '1px solid #f9f9f9', fontSize: '12px' }}>{row.period}</td>
+                        <td style={{ padding: '8px 0', borderBottom: '1px solid #f9f9f9', fontSize: '12px', textAlign: 'right', fontWeight: 600 }}>{peso(row.total)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                <h3 style={{ fontSize: '14px', borderBottom: '1px solid #eee', paddingBottom: '10px', color: '#2C3C94', fontWeight: 800 }}>MONTHLY SUMMARY</h3>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <tbody>
+                    {(report?.monthly || []).map(row => (
+                      <tr key={row.period}>
+                        <td style={{ padding: '8px 0', borderBottom: '1px solid #f9f9f9', fontSize: '12px' }}>{row.period.slice(0, 7)}</td>
+                        <td style={{ padding: '8px 0', borderBottom: '1px solid #f9f9f9', fontSize: '12px', textAlign: 'right', fontWeight: 600 }}>{peso(row.total)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div style={{
+              marginTop: '60px',
+              paddingTop: '20px',
+              borderTop: '1px solid #eee',
+              textAlign: 'center',
+              fontSize: '10px',
+              color: '#aaa',
+              position: 'relative',
+              zIndex: 1
+            }}>
+              <p style={{ margin: '0 0 5px', fontWeight: 700 }}>CONFIDENTIAL INTERNAL DOCUMENT</p>
+              <p>© {new Date().getFullYear()} NUEats POS System · All Rights Reserved</p>
             </div>
           </div>
         </DialogContent>
