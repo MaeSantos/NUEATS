@@ -11,37 +11,36 @@ import { Capacitor } from "@capacitor/core";
 const LOCAL_BACKEND_URL = "http://localhost:4000";
 const ANDROID_BACKEND_URL = import.meta.env.VITE_ANDROID_BACKEND_URL || "http://10.0.2.2:4000";
 const LAN_BACKEND_URL = import.meta.env.VITE_LAN_BACKEND_URL || "http://192.168.1.6:4000";
-const DEFAULT_PUBLIC_BACKEND_URL = "https://manual-residency-volley.ngrok-free.dev";
 const PUBLIC_BACKEND_URL = import.meta.env.VITE_PUBLIC_BACKEND_URL || "";
+const SAME_ORIGIN_API = "";
+
+function validUrl(url) {
+  return typeof url === "string" && /^https?:\/\//i.test(url);
+}
 
 const apiCandidates = (() => {
-  // If a Public/ngrok URL is provided, it takes absolute priority
-  if (PUBLIC_BACKEND_URL && PUBLIC_BACKEND_URL.startsWith("http")) {
-    return [PUBLIC_BACKEND_URL];
-  }
-
   if (typeof window === "undefined") {
     return [LOCAL_BACKEND_URL];
   }
 
   const platform = Capacitor.getPlatform ? Capacitor.getPlatform() : "web";
+  const publicUrls = validUrl(PUBLIC_BACKEND_URL) ? [PUBLIC_BACKEND_URL] : [];
 
   // If running on a mobile device (Android/iOS)
   if (platform === "android" || platform === "ios" || window.location.protocol === "capacitor:") {
-    return [...new Set([DEFAULT_PUBLIC_BACKEND_URL, ANDROID_BACKEND_URL, LAN_BACKEND_URL])];
+    return [...new Set([...publicUrls, ANDROID_BACKEND_URL, LAN_BACKEND_URL])];
   }
 
   if (window.location.hostname.endsWith(".ngrok-free.dev")) {
     return [window.location.origin];
   }
 
-  // If running in a browser but accessed via IP (e.g. from another laptop)
-  if (!["localhost", "127.0.0.1"].includes(window.location.hostname)) {
-    return [`http://${window.location.hostname}:4000`];
+  if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+    return [...new Set([SAME_ORIGIN_API, LOCAL_BACKEND_URL, ...publicUrls])];
   }
 
-  // Default to localhost for local web development
-  return [LOCAL_BACKEND_URL];
+  // If running in a browser but accessed via IP (e.g. from another laptop)
+  return [...new Set([`http://${window.location.hostname}:4000`, ...publicUrls])];
 })();
 
 let preferredApiUrl = apiCandidates[0];

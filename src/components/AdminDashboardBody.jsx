@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import '../styles/components/admindashboardbody.css';
 import { apiFetch, apiUrl } from '../api';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, IconButton } from '@mui/material';
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
+import PrintIcon from '@mui/icons-material/Print';
+import CloseIcon from '@mui/icons-material/Close';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 const orderStatuses = ["Queued", "Preparing", "Ready for pickup", "Picked up", "Cancelled"];
 const paymentStatuses = ["Pending payment", "Payment received", "Refunded"];
@@ -135,6 +138,7 @@ function AdminDashboardBody(props) {
   const [showReportPreview, setShowReportPreview] = useState(false);
   const knownOrderIds = useRef(new Set());
   const loadedOnce = useRef(false);
+  const reportRef = useRef(null);
 
   const headers = useMemo(
     () => ({
@@ -385,8 +389,97 @@ function AdminDashboardBody(props) {
     setShowReportPreview(true);
   }
 
+  function printCurrentWindow() {
+    try {
+      if (typeof window !== 'undefined' && window.print) {
+        setTimeout(() => {
+          window.print();
+        }, 100);
+      } else {
+        alert("Printing is not supported on this device/browser.");
+      }
+    } catch (e) {
+      console.error("Print error:", e);
+      alert("Failed to open print dialog. Please try again.");
+    }
+  }
+
   function handleActualPrint() {
-    window.print();
+    const reportHtml = reportRef.current?.outerHTML;
+    if (!reportHtml) {
+      printCurrentWindow();
+      return;
+    }
+
+    const printFrame = document.createElement("iframe");
+    printFrame.title = "NUEats printable report";
+    printFrame.style.position = "fixed";
+    printFrame.style.right = "0";
+    printFrame.style.bottom = "0";
+    printFrame.style.width = "0";
+    printFrame.style.height = "0";
+    printFrame.style.border = "0";
+    printFrame.style.visibility = "hidden";
+    document.body.appendChild(printFrame);
+
+    const frameDocument = printFrame.contentWindow?.document;
+    if (!frameDocument) {
+      printFrame.remove();
+      printCurrentWindow();
+      return;
+    }
+
+    frameDocument.open();
+    frameDocument.write(`
+      <!doctype html>
+      <html>
+        <head>
+          <title>NUEats Sales Analytics Report</title>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <style>
+            body {
+              margin: 0;
+              background: #ffffff;
+              color: #333333;
+              font-family: Arial, Helvetica, sans-serif;
+            }
+            .PrintableReport {
+              width: 210mm !important;
+              min-height: 297mm !important;
+              margin: 0 auto !important;
+              box-shadow: none !important;
+              border: none !important;
+            }
+            .no-print {
+              display: none !important;
+            }
+            @page {
+              margin: 10mm;
+            }
+            @media print {
+              .PrintableReport {
+                width: 100% !important;
+                min-height: auto !important;
+              }
+            }
+          </style>
+        </head>
+        <body>${reportHtml}</body>
+      </html>
+    `);
+    frameDocument.close();
+
+    setTimeout(() => {
+      try {
+        printFrame.contentWindow?.focus();
+        printFrame.contentWindow?.print();
+      } catch (error) {
+        console.error("Frame print error:", error);
+        printCurrentWindow();
+      } finally {
+        setTimeout(() => printFrame.remove(), 1000);
+      }
+    }, 300);
   }
   const menuByCategory = menu.reduce((groups, item) => {
     const category = item.category || "Other";
@@ -422,7 +515,7 @@ function AdminDashboardBody(props) {
           <strong>{peso(report?.dailyEarnings)}</strong>
         </div>
         <div className="StatCard">
-          <p>This month</p>
+          <p>This month earnings</p>
           <strong>{peso(report?.monthlyEarnings)}</strong>
         </div>
         <div className="StatCard">
@@ -772,15 +865,34 @@ function AdminDashboardBody(props) {
       {props.currentTab === "Reports" && (
         <div className="AdminGrid">
           <section className="AdminContent">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h1>Most Ordered Food</h1>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '20px',
+              flexWrap: 'wrap',
+              gap: '12px'
+            }}>
+              <h1 style={{ margin: 0 }}>Most Ordered Food</h1>
               <button
                 type="button"
                 className="RefreshButton"
                 onClick={handlePrintReport}
-                style={{ backgroundColor: '#2C3C94', color: 'white' }}
+                style={{
+                  backgroundColor: '#2C3C94',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  fontSize: '13px',
+                  padding: '0 16px',
+                  minHeight: '38px',
+                  boxShadow: '0 2px 6px rgba(44, 60, 148, 0.2)'
+                }}
               >
-                Print Report
+                <PictureAsPdfIcon fontSize="small" />
+                Print PDF
               </button>
             </div>
             <div className="RankingList">
@@ -850,52 +962,45 @@ function AdminDashboardBody(props) {
 
       <Dialog open={showReportPreview} onClose={() => setShowReportPreview(false)} maxWidth="lg" fullWidth scroll="body">
         <DialogTitle className="no-print" style={{
+          backgroundColor: '#FBFAFF',
+          borderBottom: '1px solid #E7E4F0',
+          padding: '12px 20px',
           display: 'flex',
-          justifyContent: 'space-between',
           alignItems: 'center',
-          borderBottom: '1px solid #eee',
-          padding: '16px 24px'
+          gap: '10px'
         }}>
-          <span style={{ fontWeight: 800, color: '#2C3C94' }}>Business Analytics Report Preview</span>
-          <div>
-            <Button
-              onClick={handleActualPrint}
-              variant="contained"
-              style={{ backgroundColor: '#2C3C94', marginRight: '10px', textTransform: 'none', fontWeight: 700 }}
-            >
-              Print PDF
-            </Button>
-            <Button
-              onClick={() => setShowReportPreview(false)}
-              variant="outlined"
-              style={{ color: '#666', borderColor: '#ccc', textTransform: 'none', fontWeight: 700 }}
-            >
-              Close
-            </Button>
-          </div>
+          <PictureAsPdfIcon style={{ color: '#2C3C94' }} />
+          <span style={{ fontWeight: 850, color: '#2C3C94', flex: 1, fontSize: 'clamp(14px, 4vw, 18px)' }}>Report Preview</span>
+          <IconButton
+            type="button"
+            onClick={() => setShowReportPreview(false)}
+            size="small"
+            aria-label="Close report preview"
+            style={{ color: '#667085' }}
+          >
+            <CloseIcon />
+          </IconButton>
         </DialogTitle>
-        <DialogContent style={{ backgroundColor: '#f5f5f5', padding: '20px 0' }}>
-          <style>
-            {\`
-              @media print {
-                body * { visibility: hidden; }
-                .PrintableReport, .PrintableReport * { visibility: visible; }
-                .PrintableReport {
-                  position: absolute !important;
-                  left: 0 !important;
-                  top: 0 !important;
-                  width: 100% !important;
-                  margin: 0 !important;
-                  padding: 15mm !important;
-                  box-shadow: none !important;
-                  border: none !important;
-                }
-                .no-print { display: none !important; }
-                @page { margin: 0; }
+        <DialogContent style={{ backgroundColor: '#f5f5f5', padding: '10px 0' }}>
+          <style dangerouslySetInnerHTML={{ __html: `
+            @media print {
+              body * { visibility: hidden; }
+              .PrintableReport, .PrintableReport * { visibility: visible; }
+              .PrintableReport {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 15mm !important;
+                box-shadow: none !important;
+                border: none !important;
               }
-            \`}
-          </style>
-          <div className="PrintableReport" style={{
+              .no-print { display: none !important; }
+              @page { margin: 0; }
+            }
+          ` }} />
+          <div ref={reportRef} className="PrintableReport" style={{
             padding: '5% 7%',
             color: '#333',
             backgroundColor: 'white',
@@ -1028,6 +1133,46 @@ function AdminDashboardBody(props) {
             </div>
           </div>
         </DialogContent>
+        <DialogActions className="no-print" style={{
+          padding: '12px 16px',
+          borderTop: '1px solid #E7E4F0',
+          backgroundColor: '#FBFAFF',
+          justifyContent: 'flex-end',
+          gap: '10px',
+          flexWrap: 'wrap'
+        }}>
+          <Button
+            type="button"
+            onClick={() => setShowReportPreview(false)}
+            variant="outlined"
+            startIcon={<CloseIcon />}
+            style={{
+              color: '#1F2433',
+              borderColor: '#D6D2DF',
+              textTransform: 'none',
+              fontWeight: 800,
+              borderRadius: '8px',
+              minWidth: '96px'
+            }}
+          >
+            Close
+          </Button>
+          <Button
+            type="button"
+            onClick={handleActualPrint}
+            variant="contained"
+            startIcon={<PrintIcon />}
+            style={{
+              backgroundColor: '#2C3C94',
+              textTransform: 'none',
+              fontWeight: 800,
+              borderRadius: '8px',
+              minWidth: '150px'
+            }}
+          >
+            Print / Save PDF
+          </Button>
+        </DialogActions>
       </Dialog>
     </div>
   );

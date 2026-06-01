@@ -87,6 +87,19 @@
     margin-bottom: 16px;
 }
 
+.RefreshButton:hover,
+.AdminNotice button:hover {
+    background: #1e2a6d;
+    border-color: #1e2a6d;
+    box-shadow: 0 4px 12px rgba(44, 60, 148, 0.2);
+    transform: translateY(-1px);
+}
+
+.RefreshButton:active,
+.AdminNotice button:active {
+    transform: translateY(0);
+}
+
 .RefreshButton,
 .AdminNotice button {
     min-height: 36px;
@@ -97,6 +110,7 @@
     color: #FFFFFF;
     font-weight: 800;
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .AdminNotice {

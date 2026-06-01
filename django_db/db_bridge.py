@@ -1,4 +1,5 @@
 import argparse
+from datetime import datetime, time
 import json
 import os
 import re
@@ -574,10 +575,38 @@ def cmd_order_update(args):
     print(json.dumps({"success": True, "order": serialize_order(order)}))
 
 
+def period_key(value, granularity):
+    if hasattr(value, "date"):
+        value = value.date()
+    if granularity == "year":
+        return f"{value.year:04d}"
+    if granularity == "month":
+        return f"{value.year:04d}-{value.month:02d}"
+    return value.isoformat()
+
+
+def serialize_period_rows(rows, current_period, granularity):
+    serialized = [
+        {
+            "period": row["period"].isoformat() if hasattr(row["period"], "isoformat") else str(row["period"] or ""),
+            "total": float(row["total"] or 0),
+        }
+        for row in rows
+    ]
+
+    current_key = period_key(current_period, granularity)
+    if not any(period_key(datetime.fromisoformat(row["period"]).date(), granularity) == current_key for row in serialized if row["period"]):
+        serialized.insert(0, {"period": current_period.isoformat(), "total": 0.0})
+
+    return serialized
+
+
 def cmd_report_summary(_args):
     today = timezone.localdate()
     month_start = today.replace(day=1)
     year_start = today.replace(month=1, day=1)
+    current_month_period = timezone.make_aware(datetime.combine(month_start, time.min))
+    current_year_period = timezone.make_aware(datetime.combine(year_start, time.min))
 
     paid_orders = OrderRecord.objects.filter(payment_status="Payment received")
     today_orders = paid_orders.filter(created_at__date=today)
@@ -656,18 +685,9 @@ def cmd_report_summary(_args):
                     "pendingPayments": OrderRecord.objects.filter(payment_status="Pending payment").count(),
                     "activeQueue": OrderRecord.objects.exclude(order_status__in=["Picked up", "Cancelled"]).count(),
                     "mostOrdered": most_ordered[:8],
-                    "daily": [
-                        {"period": row["period"].isoformat() if hasattr(row["period"], "isoformat") else str(row["period"] or ""), "total": float(row["total"] or 0)}
-                        for row in daily_rows
-                    ],
-                    "monthly": [
-                        {"period": row["period"].isoformat() if hasattr(row["period"], "isoformat") else str(row["period"] or ""), "total": float(row["total"] or 0)}
-                        for row in monthly_rows
-                    ],
-                    "yearly": [
-                        {"period": row["period"].isoformat() if hasattr(row["period"], "isoformat") else str(row["period"] or ""), "total": float(row["total"] or 0)}
-                        for row in yearly_rows
-                    ],
+                    "daily": serialize_period_rows(daily_rows, today, "day"),
+                    "monthly": serialize_period_rows(monthly_rows, current_month_period, "month"),
+                    "yearly": serialize_period_rows(yearly_rows, current_year_period, "year"),
                 },
             }
         )
