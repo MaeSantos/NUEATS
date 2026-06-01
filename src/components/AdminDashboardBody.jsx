@@ -960,28 +960,49 @@ function AdminDashboardBody(props) {
         </div>
       )}
 
-      <Dialog open={showReportPreview} onClose={() => setShowReportPreview(false)} maxWidth="lg" fullWidth scroll="body">
+      <Dialog
+        open={showReportPreview}
+        onClose={() => setShowReportPreview(false)}
+        maxWidth="lg"
+        fullWidth
+        scroll="body"
+        PaperProps={{
+          style: { borderRadius: '12px', overflow: 'hidden' }
+        }}
+      >
         <DialogTitle className="no-print" style={{
           backgroundColor: '#FBFAFF',
           borderBottom: '1px solid #E7E4F0',
-          padding: '12px 20px',
+          padding: '14px 20px',
           display: 'flex',
           alignItems: 'center',
+          justifyContent: 'space-between',
           gap: '10px'
         }}>
-          <PictureAsPdfIcon style={{ color: '#2C3C94' }} />
-          <span style={{ fontWeight: 850, color: '#2C3C94', flex: 1, fontSize: 'clamp(14px, 4vw, 18px)' }}>Report Preview</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden' }}>
+            <PictureAsPdfIcon style={{ color: '#2C3C94', flexShrink: 0 }} />
+            <span style={{
+              fontWeight: 850,
+              color: '#2C3C94',
+              fontSize: 'clamp(14px, 3.5vw, 18px)',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis',
+              overflow: 'hidden'
+            }}>
+              Report Preview
+            </span>
+          </div>
           <IconButton
             type="button"
             onClick={() => setShowReportPreview(false)}
             size="small"
             aria-label="Close report preview"
-            style={{ color: '#667085' }}
+            style={{ backgroundColor: 'rgba(0,0,0,0.04)', color: '#667085' }}
           >
-            <CloseIcon />
+            <CloseIcon fontSize="small" />
           </IconButton>
         </DialogTitle>
-        <DialogContent style={{ backgroundColor: '#f5f5f5', padding: '10px 0' }}>
+        <DialogContent style={{ backgroundColor: '#f5f5f5', padding: '15px 0' }}>
           <style dangerouslySetInnerHTML={{ __html: `
             @media print {
               body * { visibility: hidden; }
@@ -1134,9 +1155,11 @@ function AdminDashboardBody(props) {
           </div>
         </DialogContent>
         <DialogActions className="no-print" style={{
-          padding: '12px 16px',
+          padding: '14px 20px',
           borderTop: '1px solid #E7E4F0',
           backgroundColor: '#FBFAFF',
+          display: 'flex',
+          flexDirection: 'row',
           justifyContent: 'flex-end',
           gap: '10px',
           flexWrap: 'wrap'
@@ -1145,17 +1168,18 @@ function AdminDashboardBody(props) {
             type="button"
             onClick={() => setShowReportPreview(false)}
             variant="outlined"
-            startIcon={<CloseIcon />}
             style={{
-              color: '#1F2433',
+              color: '#667085',
               borderColor: '#D6D2DF',
               textTransform: 'none',
               fontWeight: 800,
               borderRadius: '8px',
-              minWidth: '96px'
+              padding: '8px 16px',
+              fontSize: '13px',
+              minWidth: '90px'
             }}
           >
-            Close
+            Cancel
           </Button>
           <Button
             type="button"
@@ -1167,7 +1191,10 @@ function AdminDashboardBody(props) {
               textTransform: 'none',
               fontWeight: 800,
               borderRadius: '8px',
-              minWidth: '150px'
+              padding: '8px 20px',
+              fontSize: '13px',
+              boxShadow: '0 4px 10px rgba(44, 60, 148, 0.2)',
+              minWidth: '140px'
             }}
           >
             Print / Save PDF
