@@ -3,7 +3,9 @@ import '../styles/components/admindashboardbody.css';
 import { apiFetch, apiUrl } from '../api';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, IconButton, CircularProgress } from '@mui/material';
 import { Capacitor } from '@capacitor/core';
+import { Directory, Filesystem } from '@capacitor/filesystem';
 import { LocalNotifications } from '@capacitor/local-notifications';
+import { Share } from '@capacitor/share';
 import PrintIcon from '@mui/icons-material/Print';
 import CloseIcon from '@mui/icons-material/Close';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
@@ -138,6 +140,7 @@ function AdminDashboardBody(props) {
   const [savingMenu, setSavingMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [showReportPreview, setShowReportPreview] = useState(false);
+  const [isReportPrintMode, setIsReportPrintMode] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const knownOrderIds = useRef(new Set());
   const loadedOnce = useRef(false);
@@ -389,112 +392,166 @@ function AdminDashboardBody(props) {
   const mostOrdered = report?.mostOrdered || [];
 
   function handlePrintReport() {
+    setIsReportPrintMode(false);
     setShowReportPreview(true);
   }
 
-  function printCurrentWindow() {
-    try {
-      if (typeof window !== 'undefined' && window.print) {
-        setTimeout(() => {
-          window.print();
-        }, 100);
-      } else {
-        alert("Printing is not supported on this device/browser.");
-      }
-    } catch (e) {
-      console.error("Print error:", e);
-      alert("Failed to open print dialog. Please try again.");
+  function getReportFileName() {
+    return `NUEats-Admin-Report-${new Date().toISOString().slice(0, 10)}.pdf`;
+  }
+
+  function createReportCaptureNode() {
+    if (!reportRef.current) {
+      return null;
     }
+
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "fixed";
+    wrapper.style.left = "-10000px";
+    wrapper.style.top = "0";
+    wrapper.style.width = "794px";
+    wrapper.style.background = "#ffffff";
+    wrapper.style.zIndex = "-1";
+    wrapper.style.pointerEvents = "none";
+
+    const clone = reportRef.current.cloneNode(true);
+    clone.querySelectorAll(".no-print").forEach((node) => node.remove());
+    Object.assign(clone.style, {
+      width: "794px",
+      minHeight: "auto",
+      margin: "0",
+      padding: "48px 56px",
+      boxShadow: "none",
+      border: "none",
+      boxSizing: "border-box",
+      position: "relative",
+      backgroundColor: "#ffffff",
+    });
+
+    wrapper.appendChild(clone);
+    document.body.appendChild(wrapper);
+    return wrapper;
+  }
+
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = String(reader.result || "");
+        resolve(result.includes(",") ? result.split(",")[1] : result);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  async function savePdfFile(pdf, fileName) {
+    const blob = pdf.output("blob");
+
+    if (Capacitor.isNativePlatform()) {
+      const base64Data = await blobToBase64(blob);
+      const savedFile = await Filesystem.writeFile({
+        path: fileName,
+        data: base64Data,
+        directory: Directory.Documents,
+        recursive: true,
+      });
+
+      await Share.share({
+        title: "NUEats Admin Report",
+        text: "Save or share the generated NUEats admin report.",
+        url: savedFile.uri,
+        dialogTitle: "Save PDF",
+      });
+      return;
+    }
+
+    try {
+      pdf.save(fileName);
+      return;
+    } catch (error) {
+      console.warn("jsPDF save failed, trying anchor download.", error);
+    }
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = fileName;
+    link.rel = "noopener";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.setTimeout(() => URL.revokeObjectURL(url), 2000);
   }
 
   async function handleDownloadPDF() {
-    if (!reportRef.current) return;
+    if (!reportRef.current || isGeneratingPDF) {
+      return;
+    }
 
     setIsGeneratingPDF(true);
+    let captureNode = null;
+
     try {
-      const element = reportRef.current;
-      const canvas = await html2canvas(element, {
-        scale: 1.5, // Reduced scale to prevent memory issues on mobile
+      captureNode = createReportCaptureNode();
+      if (!captureNode) {
+        throw new Error("Report preview is not ready.");
+      }
+
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+
+      const canvas = await html2canvas(captureNode.firstElementChild, {
+        scale: Math.min(2, window.devicePixelRatio || 1.5),
         useCORS: true,
+        allowTaint: true,
         logging: false,
-        backgroundColor: '#ffffff'
+        backgroundColor: "#ffffff",
+        windowWidth: 794,
+        scrollX: 0,
+        scrollY: 0,
       });
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.85); // JPEG is smaller than PNG
+      const imgData = canvas.toDataURL("image/jpeg", 0.92);
       const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
       });
 
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = 0;
 
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, imgHeight, undefined, "FAST");
+      heightLeft -= pageHeight;
 
-      const fileName = `NUEats-Report-${new Date().toISOString().slice(0, 10)}.pdf`;
-
-      if (Capacitor.isNativePlatform()) {
-        const blob = pdf.output('blob');
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        setTimeout(() => URL.revokeObjectURL(url), 2000);
-      } else {
-        pdf.save(fileName);
+      while (heightLeft > 0) {
+        position -= pageHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, imgHeight, undefined, "FAST");
+        heightLeft -= pageHeight;
       }
+
+      await savePdfFile(pdf, getReportFileName());
     } catch (error) {
       console.error("PDF Generation failed:", error);
       alert("Failed to generate PDF. Please try again.");
     } finally {
+      captureNode?.remove();
       setIsGeneratingPDF(false);
     }
   }
 
   function handleActualPrint() {
-    const reportHtml = reportRef.current?.innerHTML;
-    if (!reportHtml) {
-      window.print();
-      return;
-    }
+    setIsReportPrintMode(true);
+    setTimeout(() => window.print(), 150);
+  }
 
-    const printWindow = window.open('', '_blank', 'width=800,height=900');
-    if (!printWindow) {
-      alert("Please allow popups to print.");
-      return;
-    }
-
-    printWindow.document.open();
-    printWindow.document.write(`
-      <!doctype html>
-      <html>
-        <head>
-          <title>NUEats Report</title>
-          <style>
-            body { font-family: sans-serif; padding: 20px; }
-            .no-print { display: none !important; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #eee; padding: 10px; text-align: left; }
-            .peso { color: #2C3C94; font-weight: bold; }
-            h1, h2, h3 { color: #2C3C94; }
-          </style>
-        </head>
-        <body>
-          ${reportHtml}
-          <script>
-            window.onload = () => {
-              window.print();
-              setTimeout(() => window.close(), 500);
-            };
-          </script>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
+  function closeReportPreview() {
+    setIsReportPrintMode(false);
+    setShowReportPreview(false);
   }
 
   const menuByCategory = menu.reduce((groups, item) => {
@@ -978,12 +1035,18 @@ function AdminDashboardBody(props) {
 
       <Dialog
         open={showReportPreview}
-        onClose={() => setShowReportPreview(false)}
+        onClose={closeReportPreview}
         maxWidth="lg"
         fullWidth
         scroll="body"
         PaperProps={{
-          style: { borderRadius: '12px', overflow: 'hidden' }
+          style: {
+            borderRadius: '12px',
+            overflow: 'hidden',
+            margin: '8px',
+            width: 'calc(100% - 16px)',
+            maxHeight: 'calc(100dvh - 16px)'
+          }
         }}
       >
         <DialogTitle className="no-print" style={{
@@ -1005,21 +1068,61 @@ function AdminDashboardBody(props) {
               textOverflow: 'ellipsis',
               overflow: 'hidden'
             }}>
-              Report Preview
+              {isReportPrintMode ? "Print / Save PDF" : "Report Preview"}
             </span>
           </div>
-          <IconButton
-            type="button"
-            onClick={() => setShowReportPreview(false)}
-            size="small"
-            aria-label="Close report preview"
-            style={{ backgroundColor: 'rgba(0,0,0,0.04)', color: '#667085' }}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
+          {!isReportPrintMode && (
+            <IconButton
+              type="button"
+              onClick={closeReportPreview}
+              size="small"
+              aria-label="Close report preview"
+              style={{ backgroundColor: 'rgba(0,0,0,0.04)', color: '#667085' }}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          )}
         </DialogTitle>
-        <DialogContent style={{ backgroundColor: '#f5f5f5', padding: '15px 0' }}>
+        <DialogContent style={{
+          backgroundColor: '#f5f5f5',
+          padding: '10px 0',
+          maxHeight: 'calc(100dvh - 142px)',
+          overflow: 'auto'
+        }}>
           <style dangerouslySetInnerHTML={{ __html: `
+            .PrintableReport {
+              overflow-wrap: anywhere;
+            }
+            .PrintableReport table {
+              table-layout: fixed;
+            }
+            .PrintableReport th,
+            .PrintableReport td {
+              word-break: break-word;
+            }
+            @media screen and (max-width: 620px) {
+              .PrintableReport {
+                width: calc(100vw - 20px) !important;
+                padding: 14px !important;
+                min-height: auto !important;
+                font-size: 11px !important;
+              }
+              .PrintableReport h1 {
+                font-size: 24px !important;
+                letter-spacing: 0 !important;
+              }
+              .PrintableReport h2 {
+                font-size: 14px !important;
+              }
+              .PrintableReport h3 {
+                font-size: 12px !important;
+              }
+              .PrintableReport th,
+              .PrintableReport td {
+                padding: 6px 4px !important;
+                font-size: 9px !important;
+              }
+            }
             @media print {
               body * { visibility: hidden; }
               .PrintableReport, .PrintableReport * { visibility: visible; }
@@ -1041,8 +1144,8 @@ function AdminDashboardBody(props) {
             padding: '5% 7%',
             color: '#333',
             backgroundColor: 'white',
-            width: 'min(210mm, 95%)',
-            minHeight: '297mm',
+            width: 'min(210mm, calc(100vw - 20px))',
+            minHeight: 'auto',
             margin: '0 auto',
             boxShadow: '0 0 20px rgba(0,0,0,0.1)',
             boxSizing: 'border-box',
@@ -1176,48 +1279,73 @@ function AdminDashboardBody(props) {
           backgroundColor: '#FBFAFF',
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: 'center', // Center on mobile
+          justifyContent: 'center',
           gap: '8px',
-          flexWrap: 'wrap'
+          flexWrap: 'wrap',
+          maxHeight: '40dvh',
+          overflowY: 'auto'
         }}>
-          <Button
-            type="button"
-            onClick={() => setShowReportPreview(false)}
-            variant="outlined"
-            style={{
-              color: '#667085',
-              borderColor: '#D6D2DF',
-              textTransform: 'none',
-              fontWeight: 800,
-              borderRadius: '8px',
-              padding: '6px 12px',
-              fontSize: '12px',
-              flex: '1 1 100px',
-              maxWidth: '150px'
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="button"
-            onClick={handleDownloadPDF}
-            variant="contained"
-            disabled={isGeneratingPDF}
-            startIcon={isGeneratingPDF ? <CircularProgress size={16} color="inherit" /> : <PrintIcon style={{ fontSize: 18 }} />}
-            style={{
-              backgroundColor: '#2C3C94',
-              textTransform: 'none',
-              fontWeight: 800,
-              borderRadius: '8px',
-              padding: '8px 16px',
-              fontSize: '12px',
-              flex: '1 1 140px',
-              maxWidth: '220px',
-              boxShadow: '0 2px 8px rgba(44, 60, 148, 0.2)'
-            }}
-          >
-            {isGeneratingPDF ? 'Generating...' : 'Save as PDF'}
-          </Button>
+          {!isReportPrintMode && (
+            <Button
+              type="button"
+              onClick={closeReportPreview}
+              variant="outlined"
+              style={{
+                color: '#667085',
+                borderColor: '#D6D2DF',
+                textTransform: 'none',
+                fontWeight: 800,
+                borderRadius: '8px',
+                padding: '6px 12px',
+                fontSize: '12px',
+                flex: '1 1 100px',
+                maxWidth: '150px'
+              }}
+            >
+              Cancel
+            </Button>
+          )}
+          {isReportPrintMode ? (
+            <Button
+              type="button"
+              onClick={() => setIsReportPrintMode(false)}
+              variant="outlined"
+              style={{
+                color: '#2C3C94',
+                borderColor: '#2C3C94',
+                textTransform: 'none',
+                fontWeight: 800,
+                borderRadius: '8px',
+                padding: '8px 16px',
+                fontSize: '12px',
+                flex: '1 1 120px',
+                maxWidth: '180px'
+              }}
+            >
+              Back
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              onClick={handleDownloadPDF}
+              variant="contained"
+              disabled={isGeneratingPDF}
+              startIcon={isGeneratingPDF ? <CircularProgress size={16} color="inherit" /> : <PictureAsPdfIcon style={{ fontSize: 18 }} />}
+              style={{
+                backgroundColor: isGeneratingPDF ? '#98A2B3' : '#137333',
+                textTransform: 'none',
+                fontWeight: 800,
+                borderRadius: '8px',
+                padding: '8px 16px',
+                fontSize: '12px',
+                flex: '1 1 150px',
+                maxWidth: '220px',
+                boxShadow: '0 2px 8px rgba(19, 115, 51, 0.2)'
+              }}
+            >
+              {isGeneratingPDF ? 'Generating...' : 'Download PDF'}
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
     </div>
