@@ -16,8 +16,8 @@ fi
 echo "Building web assets..."
 npm run build
 
-# Copy assets to iOS
-echo "Copying assets to iOS..."
-npx cap copy ios
+# Sync assets and plugins to iOS
+echo "Syncing assets and plugins to iOS..."
+npx cap sync ios
 
 echo "Web assets built and synced successfully"

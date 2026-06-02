@@ -72,19 +72,33 @@ To generate a new APK for testing:
 
 ## iOS Development
 
-To update the iOS project with the latest NUEats web app:
+To fully update and run the iOS project on an Apple device:
 
-1.  **Build Web Assets**:
+1.  **Sync & Build**:
+    Run this command in your project terminal:
     ```powershell
-    npm run build
+    npm run ios:build
     ```
-2.  **Sync iOS Assets**:
-    ```powershell
-    npx cap copy ios
-    ```
-3.  **Open in Xcode**: Open `ios/App/App.xcworkspace` on macOS with Xcode, select a simulator or connected iPhone, then press **Run**.
+    *This builds the web assets and synchronizes all Capacitor plugins with the iOS project.*
 
-The copied web files are stored in `ios/App/App/public`. A Mac with Xcode is required to build or run the iOS app.
+2.  **Open in Xcode**:
+    ```powershell
+    npx cap open ios
+    ```
+    *Or manually open `ios/App/App.xcworkspace` on your Mac.*
+
+3.  **Run on Device**:
+    - Connect your iPhone/iPad via USB.
+    - Select your device in the Xcode target dropdown.
+    - **Code Signing**: Under the **Signing & Capabilities** tab, ensure you have a "Team" selected.
+    - Press **Run (Cmd+R)**.
+
+**Note**: To allow the physical device to connect to your local server:
+1.  Ensure your phone and laptop are on the same Wi-Fi.
+2.  Find your laptop's Local IP address (e.g., run `ipconfig` on Windows).
+3.  Update `LAN_BACKEND_URL` in `src/api.js` with your IP (e.g., `http://192.168.x.x:4000`).
+4.  Alternatively, use **ngrok** as described in the Connectivity section for easier remote testing.
+5.  **Always** run `npm run ios:build` after changing `src/api.js` to sync the changes to the app.
 
 ## Payments & Invoicing
 

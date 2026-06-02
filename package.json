@@ -13,9 +13,9 @@
     "db:init": "python django_db/db_bridge.py init",
     "django:check": "python django_db/manage.py check",
     "dev:all": "npm run dev",
-    "android:build": "npm run build && npx cap copy android",
+    "android:build": "npm run build && npx cap sync android",
     "android:open": "npm run android:build && npx cap open android",
-    "ios:build": "npm run build && npx cap copy ios",
+    "ios:build": "npm run build && npx cap sync ios",
     "ios:open": "npm run ios:build && npx cap open ios",
     "lint": "eslint ."
   },
@@ -34,6 +34,8 @@
     "cors": "^2.8.6",
     "dotenv": "^16.4.7",
     "express": "^5.2.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^4.2.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-router-dom": "^7.15.1"

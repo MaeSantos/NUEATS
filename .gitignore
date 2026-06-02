@@ -15,6 +15,7 @@ dist-ssr
 .env.*
 admin-users.local.json
 *.sqlite3
+*.sqlite3-*
 __pycache__/
 *.py[cod]
 
@@ -22,6 +23,7 @@ __pycache__/
 .vscode/*
 !.vscode/extensions.json
 .idea
+android/gradle/gradle-daemon-jvm.properties
 .DS_Store
 *.suo
 *.ntvs*

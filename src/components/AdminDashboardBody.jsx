@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import '../styles/components/admindashboardbody.css';
 import { apiFetch, apiUrl } from '../api';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, IconButton } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, IconButton, CircularProgress } from '@mui/material';
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import PrintIcon from '@mui/icons-material/Print';
 import CloseIcon from '@mui/icons-material/Close';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 const orderStatuses = ["Queued", "Preparing", "Ready for pickup", "Picked up", "Cancelled"];
 const paymentStatuses = ["Pending payment", "Payment received", "Refunded"];
@@ -136,6 +138,7 @@ function AdminDashboardBody(props) {
   const [savingMenu, setSavingMenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [showReportPreview, setShowReportPreview] = useState(false);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const knownOrderIds = useRef(new Set());
   const loadedOnce = useRef(false);
   const reportRef = useRef(null);
@@ -404,83 +407,96 @@ function AdminDashboardBody(props) {
     }
   }
 
+  async function handleDownloadPDF() {
+    if (!reportRef.current) return;
+
+    setIsGeneratingPDF(true);
+    try {
+      const element = reportRef.current;
+      const canvas = await html2canvas(element, {
+        scale: 1.5, // Reduced scale to prevent memory issues on mobile
+        useCORS: true,
+        logging: false,
+        backgroundColor: '#ffffff'
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.85); // JPEG is smaller than PNG
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+
+      const fileName = `NUEats-Report-${new Date().toISOString().slice(0, 10)}.pdf`;
+
+      if (Capacitor.isNativePlatform()) {
+        const blob = pdf.output('blob');
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+      } else {
+        pdf.save(fileName);
+      }
+    } catch (error) {
+      console.error("PDF Generation failed:", error);
+      alert("Failed to generate PDF. Please try again.");
+    } finally {
+      setIsGeneratingPDF(false);
+    }
+  }
+
   function handleActualPrint() {
-    const reportHtml = reportRef.current?.outerHTML;
+    const reportHtml = reportRef.current?.innerHTML;
     if (!reportHtml) {
-      printCurrentWindow();
+      window.print();
       return;
     }
 
-    const printFrame = document.createElement("iframe");
-    printFrame.title = "NUEats printable report";
-    printFrame.style.position = "fixed";
-    printFrame.style.right = "0";
-    printFrame.style.bottom = "0";
-    printFrame.style.width = "0";
-    printFrame.style.height = "0";
-    printFrame.style.border = "0";
-    printFrame.style.visibility = "hidden";
-    document.body.appendChild(printFrame);
-
-    const frameDocument = printFrame.contentWindow?.document;
-    if (!frameDocument) {
-      printFrame.remove();
-      printCurrentWindow();
+    const printWindow = window.open('', '_blank', 'width=800,height=900');
+    if (!printWindow) {
+      alert("Please allow popups to print.");
       return;
     }
 
-    frameDocument.open();
-    frameDocument.write(`
+    printWindow.document.open();
+    printWindow.document.write(`
       <!doctype html>
       <html>
         <head>
-          <title>NUEats Sales Analytics Report</title>
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <title>NUEats Report</title>
           <style>
-            body {
-              margin: 0;
-              background: #ffffff;
-              color: #333333;
-              font-family: Arial, Helvetica, sans-serif;
-            }
-            .PrintableReport {
-              width: 210mm !important;
-              min-height: 297mm !important;
-              margin: 0 auto !important;
-              box-shadow: none !important;
-              border: none !important;
-            }
-            .no-print {
-              display: none !important;
-            }
-            @page {
-              margin: 10mm;
-            }
-            @media print {
-              .PrintableReport {
-                width: 100% !important;
-                min-height: auto !important;
-              }
-            }
+            body { font-family: sans-serif; padding: 20px; }
+            .no-print { display: none !important; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 1px solid #eee; padding: 10px; text-align: left; }
+            .peso { color: #2C3C94; font-weight: bold; }
+            h1, h2, h3 { color: #2C3C94; }
           </style>
         </head>
-        <body>${reportHtml}</body>
+        <body>
+          ${reportHtml}
+          <script>
+            window.onload = () => {
+              window.print();
+              setTimeout(() => window.close(), 500);
+            };
+          </script>
+        </body>
       </html>
     `);
-    frameDocument.close();
-
-    setTimeout(() => {
-      try {
-        printFrame.contentWindow?.focus();
-        printFrame.contentWindow?.print();
-      } catch (error) {
-        console.error("Frame print error:", error);
-        printCurrentWindow();
-      } finally {
-        setTimeout(() => printFrame.remove(), 1000);
-      }
-    }, 300);
+    printWindow.document.close();
   }
+
   const menuByCategory = menu.reduce((groups, item) => {
     const category = item.category || "Other";
     groups[category] = groups[category] || [];
@@ -1155,13 +1171,13 @@ function AdminDashboardBody(props) {
           </div>
         </DialogContent>
         <DialogActions className="no-print" style={{
-          padding: '14px 20px',
+          padding: '12px 16px',
           borderTop: '1px solid #E7E4F0',
           backgroundColor: '#FBFAFF',
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: 'flex-end',
-          gap: '10px',
+          justifyContent: 'center', // Center on mobile
+          gap: '8px',
           flexWrap: 'wrap'
         }}>
           <Button
@@ -1174,30 +1190,33 @@ function AdminDashboardBody(props) {
               textTransform: 'none',
               fontWeight: 800,
               borderRadius: '8px',
-              padding: '8px 16px',
-              fontSize: '13px',
-              minWidth: '90px'
+              padding: '6px 12px',
+              fontSize: '12px',
+              flex: '1 1 100px',
+              maxWidth: '150px'
             }}
           >
             Cancel
           </Button>
           <Button
             type="button"
-            onClick={handleActualPrint}
+            onClick={handleDownloadPDF}
             variant="contained"
-            startIcon={<PrintIcon />}
+            disabled={isGeneratingPDF}
+            startIcon={isGeneratingPDF ? <CircularProgress size={16} color="inherit" /> : <PrintIcon style={{ fontSize: 18 }} />}
             style={{
               backgroundColor: '#2C3C94',
               textTransform: 'none',
               fontWeight: 800,
               borderRadius: '8px',
-              padding: '8px 20px',
-              fontSize: '13px',
-              boxShadow: '0 4px 10px rgba(44, 60, 148, 0.2)',
-              minWidth: '140px'
+              padding: '8px 16px',
+              fontSize: '12px',
+              flex: '1 1 140px',
+              maxWidth: '220px',
+              boxShadow: '0 2px 8px rgba(44, 60, 148, 0.2)'
             }}
           >
-            Print / Save PDF
+            {isGeneratingPDF ? 'Generating...' : 'Save as PDF'}
           </Button>
         </DialogActions>
       </Dialog>
