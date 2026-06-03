@@ -26,6 +26,9 @@ const paymentApps = {
 function Cart(props) {
     const [copied, setCopied] = useState(false);
     const hasItems = props.items && props.items.length > 0;
+    const totalQuantity = (props.items || []).reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+    const prepStartMinutes = hasItems ? Math.min(35, 6 + totalQuantity * 2) : 0;
+    const prepEndMinutes = hasItems ? prepStartMinutes + 5 : 0;
     const referenceDigits = String(props.paymentInfo || "").replace(/\D+/g, "");
     const referenceInvalid = (props.paymentMethod === "gcash" || props.paymentMethod === "maya")
         && referenceDigits.length > 0
@@ -256,6 +259,15 @@ function Cart(props) {
             </div>
             <hr />
             <div className="CartFooter">
+                {hasItems && (
+                    <div className="PrepEstimate">
+                        <div>
+                            <p className="PrepEstimateLabel">Estimated preparation</p>
+                            <p className="PrepEstimateHelp">Staff will update your order status when it is ready.</p>
+                        </div>
+                        <strong>{prepStartMinutes}-{prepEndMinutes} min</strong>
+                    </div>
+                )}
                 <div className="Price">
                     <p id="price-label">Total: ₱{props.total.toFixed(2)}</p>
                 </div>

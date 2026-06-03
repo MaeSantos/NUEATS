@@ -58,6 +58,10 @@ class MenuItem(models.Model):
 
     class Meta:
         ordering = ["key"]
+        indexes = [
+            models.Index(fields=["category", "is_available"], name="menu_cat_avail_idx"),
+            models.Index(fields=["is_available", "stock"], name="menu_avail_stock_idx"),
+        ]
 
     def to_dict(self):
         return {
@@ -119,6 +123,15 @@ class OrderRecord(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["created_at"], name="order_created_idx"),
+            models.Index(fields=["order_status"], name="order_status_idx"),
+            models.Index(fields=["payment_status"], name="order_payment_idx"),
+            models.Index(fields=["payment_status", "created_at"], name="order_pay_created_idx"),
+            models.Index(fields=["student", "-created_at"], name="order_student_created_idx"),
+        ]
 
     def to_dict(self):
         return {

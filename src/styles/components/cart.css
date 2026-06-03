@@ -293,6 +293,40 @@ hr {
     background: #FBFAFF;
 }
 
+.PrepEstimate {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    background: #FFFFFF;
+    border: 1px solid #E7E4F0;
+    border-radius: 8px;
+    box-shadow: 0 2px 9px rgba(31, 36, 51, 0.05);
+}
+
+.PrepEstimateLabel {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 800;
+    color: #1F2433;
+}
+
+.PrepEstimateHelp {
+    margin: 4px 0 0;
+    font-size: 11px;
+    line-height: 1.35;
+    color: #667085;
+}
+
+.PrepEstimate strong {
+    flex-shrink: 0;
+    font-size: 18px;
+    color: #2C3C94;
+    white-space: nowrap;
+}
+
 .Price {
     display: flex;
     justify-content: start;

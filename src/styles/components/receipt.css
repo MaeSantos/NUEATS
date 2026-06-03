@@ -74,13 +74,22 @@
 }
 
 .ReceiptItemsHeader {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 40px 80px;
+  column-gap: 8px;
   font-size: 11px;
   font-weight: 800;
   color: #888;
   margin-bottom: 10px;
-  padding: 0 5px;
+  padding: 0;
+}
+
+.ReceiptItemsHeader span:nth-child(2) {
+  text-align: center;
+}
+
+.ReceiptItemsHeader span:nth-child(3) {
+  text-align: right;
 }
 
 .ReceiptItems {
@@ -88,16 +97,17 @@
 }
 
 .ReceiptItemRow {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 40px 80px;
+  column-gap: 8px;
   align-items: center;
   margin-bottom: 8px;
   font-size: 14px;
 }
 
 .ItemName {
-  flex: 1;
   font-weight: 500;
+  min-width: 0;
 }
 
 .ItemQty {
